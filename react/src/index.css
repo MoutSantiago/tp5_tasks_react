@@ -1,0 +1,102 @@
+:root {
+	--text: #ffffff;
+	--secondary-text: #95accb;
+	--border: #ffffff19;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	background-color: #424242;
+	overflow: hidden;
+}
+
+main {
+	width: 100%;
+	max-width: 1240px;
+	margin: auto;
+	border: solid 1px --border;
+	padding: 0 16px;
+}
+
+section {
+	box-sizing: border-box;
+	width: 100%;
+	border: solid 1px var(--border);
+	display: flex;
+}
+
+section,
+article {
+	gap: 8px;
+	padding: 16px;
+}
+
+.card {
+	flex-grow: 1;
+	border: solid 1px var(--border);
+	border-radius: 20px;
+}
+
+.card--graphic {
+	flex-grow: 2.82;
+}
+
+.header {
+	display: flex;
+	width: 100%;
+}
+
+.header > p {
+	margin: 0;
+}
+
+.header--first {
+	flex-grow: 1;
+	padding-bottom: 8px;
+	margin-bottom: 8px;
+	border-bottom: solid 1px var(--border);
+}
+
+.title {
+	font-weight: 700;
+	color: var(--text);
+}
+
+.title--small {
+	font-size: 0.9rem;
+}
+
+.title--large {
+	font-size: 2rem;
+}
+
+.subtitle {
+	color: var(--secondary-text);
+	font-size: 0.8rem;
+}
+
+.title--second {
+	color: var(--secondary-text);
+	margin-left: 8px;
+}
+
+.item--top {
+	width: 100%;
+	display: flex;
+}
+
+.item--top > .title {
+	flex-grow: 1;
+}
+
+.stadistic {
+	flex-grow: 1;
+	border: solid 1px var(--border);
+	border-radius: 20px;
+}
+
+.task--container {
+	display: flex;
+	flex-direction: column;
+}
