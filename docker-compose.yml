@@ -1,0 +1,51 @@
+services:
+  task_db:
+    image: postgres:16-alpine
+    container_name: task_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - task_volume:/var/lib/postgresql/data
+      - ./data:/docker-entrypoint-initdb.d
+    networks:
+      - task_net
+
+  task_api:
+    build:
+      context: ./api
+      target: development
+    container_name: task_api
+    ports:
+      - "${API_PORT}:3000"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: task_db
+      DB_PORT: ${DB_PORT}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@task_db:5432/${DB_NAME}
+    volumes:
+      - ./api:/opt
+      - /opt/node_modules
+    depends_on:
+      task_db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - task_net
+
+volumes:
+  task_volume:
+
+networks:
+  task_net:
+    driver: bridge
