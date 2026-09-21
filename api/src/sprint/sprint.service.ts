@@ -106,6 +106,7 @@ export class SprintService {
 
   /**
    * Cancela un sprint, modificando su estado en la base de datos
+   * El sprint no puede tener los estado de cancelado o completado para que este cambio tenga efecto
    *
    * @async
    * @param {number} id Id del sprint que se va a cancelar

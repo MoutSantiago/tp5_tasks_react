@@ -35,8 +35,4 @@ export class EditTaskDto {
   @IsNumber()
   @IsOptional()
   assignee_id?: number;
-
-  @IsEnum(task_state)
-  @IsOptional()
-  status?: task_state;
 }

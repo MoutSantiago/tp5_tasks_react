@@ -1,0 +1,17 @@
+services:
+  task_react:
+    build:
+      context: ./react
+      target: development
+    container_name: task_react
+    ports:
+      - "${REACT_PORT}:5173"
+    volumes:
+      - ./react:/opt
+      - /opt/node_modules
+    restart: unless-stopped
+    depends_on:
+      task_api:
+        condition: service_started
+    networks:
+      - task_net
