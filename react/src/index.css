@@ -215,11 +215,13 @@ button {
 		transform var(--transition-base),
 		box-shadow var(--transition-base),
 		border-color var(--transition-base);
+	max-height: 343px;
 }
 
 .card--large {
 	grid-row: 1 / 3;
 	height: 100%;
+	max-height: none;
 	height: 470px;
 }
 

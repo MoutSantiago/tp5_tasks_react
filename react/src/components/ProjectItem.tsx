@@ -21,7 +21,6 @@ export default function ProjectItem({
 			<div className="list-item__top">
 				<span className="list-item__title">{project.name}</span>
 			</div>
-			<span className="list-item__subtitle">{project.description}</span>
 		</div>
 	);
 }

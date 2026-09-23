@@ -4,6 +4,7 @@ services:
       context: ./react
       target: development
     container_name: task_react
+    env_file: ".env"
     ports:
       - "${REACT_PORT}:5173"
     volumes:

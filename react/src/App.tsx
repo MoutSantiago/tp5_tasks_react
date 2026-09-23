@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
+import { api } from "./api/axios";
 import Chart from "./components/Chart";
 import InfoCard from "./components/InfoCard";
 import Statistic from "./components/Statistic";
@@ -7,126 +9,6 @@ import BigTask from "./components/BigTask";
 import ProjectInfo from "./components/ProjectInfo";
 
 import type { Project, Task, User } from "./types/data";
-
-const TASKS: Task[] = [
-	{
-		id: 1,
-		summary: "Redactar informe de avance del TP",
-		description:
-			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Id quis rem debitis sapiente tempore nam officia ullam quaerat libero assumenda eos ipsa est nemo necessitatibus, soluta, itaque in deserunt accusamus.",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-	{
-		id: 2,
-		summary: "Redactar informe de avance del TP",
-		description: "",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-	{
-		id: 3,
-		summary: "Redactar informe de avance del TP",
-		description: "",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-	{
-		id: 4,
-		summary: "Redactar informe de avance del TP",
-		description: "",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-	{
-		id: 5,
-		summary: "Redactar informe de avance del TP",
-		description: "",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-	{
-		id: 6,
-		summary: "Redactar informe de avance del TP",
-		description: "",
-		activity: "bug",
-		status: "done",
-		priority: "must",
-		created_at: new Date(),
-		closed_at: undefined,
-		sprint_id: 1,
-		reporter_id: 2,
-		assignee_id: undefined,
-	},
-];
-
-const PROJECTS: Project[] = [
-	{
-		id: 1,
-		name: "Avanzada",
-		description: "Me gusta mucho la maria",
-		created_at: new Date(),
-	},
-	{
-		id: 2,
-		name: "Avanzada",
-		description: "Me gusta mucho la maria",
-		created_at: new Date(),
-	},
-];
-
-const USERS: User[] = [
-	{
-		id: 1,
-		name: "Santiago Mout",
-		created_at: new Date(),
-	},
-	{
-		id: 2,
-		name: "Axel Sandillu",
-		created_at: new Date(),
-	},
-	{
-		id: 3,
-		name: "Valentino Laiño",
-		created_at: new Date(),
-	},
-	{
-		id: 4,
-		name: "Ana Lucia Colazo",
-		created_at: new Date(),
-	},
-];
 
 type Select = {
 	type: "chart" | "task" | "project";
@@ -140,9 +22,53 @@ type Select = {
  */
 function App() {
 	const [selected, setSelected] = useState<Select>({ type: "chart" });
+	const [tasks, setTasks] = useState<Task[]>([]);
+	const [projects, setProjects] = useState<Project[]>([]);
+	const [users, setUsers] = useState<User[]>([]);
+
+	const taskDone: number = tasks.filter(
+		(task) => task.status === "done",
+	).length;
+	const taskDonePercentage: number = (taskDone * 100) / tasks.length;
+
+	const taskPending: number = tasks.length - taskDone;
+	const taskPendingPercentage: number = (taskPending * 100) / tasks.length;
+
+	useEffect(() => {
+		const loadTasks = async () => {
+			const response = await api.get("/task");
+			setTasks(
+				response.data.map((task: Task) => ({
+					...task,
+					created_at: new Date(task.created_at),
+					closed_at: task.closed_at ? new Date(task.closed_at) : null,
+				})),
+			);
+		};
+
+		const loadProjects = async () => {
+			const response = await api.get("/project");
+			setProjects(
+				response.data.map((project: Project) => ({
+					...project,
+					created_at: new Date(project.created_at),
+				})),
+			);
+		};
+
+		const loadUsers = async () => {
+			const response = await api.get("/user");
+			setUsers(response.data);
+		};
+
+		loadTasks();
+		loadProjects();
+		loadUsers();
+	}, []);
 
 	return (
 		<>
+			<Toaster />
 			<div className="ambient" aria-hidden="true">
 				<div className="ambient__orb ambient__orb--one" />
 				<div className="ambient__orb ambient__orb--two" />
@@ -163,50 +89,51 @@ function App() {
 						) : selected.task ? (
 							<BigTask
 								task={selected.task}
-								func={() => console.log("Editar")}
+								func={() => toast.info("Editar tarea")}
 							/>
 						) : selected.project ? (
 							<ProjectInfo
 								project={selected.project}
-								func={() => console.log("Editar proyecto")}
+								func={() => toast.info("Editar proyecto")}
 							/>
 						) : undefined}
 					</article>
 					<InfoCard
 						title="Proyectos"
-						projects={PROJECTS}
+						projects={projects}
 						func={() => {
-							console.log("Proyecto");
+							toast.info("Añadir proyecto");
 						}}
 						select={setSelected}
 					/>
 					<InfoCard
 						title="Usuarios"
-						users={USERS}
+						users={users}
 						func={() => {
-							console.log("Usuario");
+							toast.info("Añadir usuario");
 						}}
 					/>
 
 					<Statistic
 						title="Tareas completadas"
-						value={65}
-						change="+12%"
+						value={taskDone}
+						change={`${taskDonePercentage}%`}
+						increasing={taskDone >= taskPending}
 						select={setSelected}
 					/>
 					<Statistic
 						title="Tareas pendientes"
-						value={23}
-						change="-4%"
-						increasing={false}
+						value={taskPending}
+						change={`${taskPendingPercentage}%`}
+						increasing={taskDone < taskPending}
 						select={setSelected}
 					/>
 				</section>
 				<TaskList
 					title="Tareas"
-					tasks={TASKS}
+					tasks={tasks}
 					func={() => {
-						console.log("Tarea");
+						toast.info("Añadir tarea");
 					}}
 					select={setSelected}
 				/>

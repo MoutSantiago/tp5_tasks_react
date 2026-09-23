@@ -4,6 +4,7 @@ services:
       context: ./api
       target: production
     container_name: task_api
+    env_file: ".env"
     ports:
       - "${API_PORT}:3000"
     env_file:

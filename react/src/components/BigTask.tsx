@@ -47,7 +47,7 @@ export default function BigTask({
 						</span>
 					</div>
 				</div>
-				<p className="task__user--name">Dependencias:</p>
+				<p className="task__user--name">Prerequisitos:</p>
 				<div className="task__dependencies">
 					<p className="card__subtitle">- Compra de materiales</p>
 					<p className="card__subtitle">- Compra de materiales</p>
@@ -62,7 +62,7 @@ export default function BigTask({
 				<span className="task__date">
 					{task.created_at.toLocaleDateString("en-GB")}
 					{task.closed_at
-						? "- " + task.closed_at.toLocaleDateString("en-GB")
+						? " - " + task.closed_at.toLocaleDateString("en-GB")
 						: ""}
 				</span>
 			</footer>
