@@ -48,14 +48,14 @@ export class UserController {
    *
    * @param id Id del usuario
    * @param userDto Datos con el nuevo nombre
+   * @return {Promise<app_user>} Usuario con el nombre cambiado
    */
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async modifyName(
     @Param('id', ParseIntPipe) id: number,
     @Body() userDto: UserDto,
-  ): Promise<void> {
-    await this.userService.modifyName(id, userDto.name);
+  ): Promise<app_user> {
+    return await this.userService.modifyName(id, userDto.name);
   }
 
   /**

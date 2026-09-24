@@ -26,8 +26,7 @@ export class CreateTaskDto {
   priority?: priority;
 
   @IsNumber()
-  @IsOptional()
-  sprint_id?: number;
+  sprint_id: number;
 
   @IsNumber()
   reporter_id: number;

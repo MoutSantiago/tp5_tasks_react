@@ -51,14 +51,14 @@ export class ProjectController {
    *
    * @param id Id de lproyecto
    * @param updateProjectDto Datos a modificar
+   * @return {Promise<project>} Proyecto editado
    */
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async modifyProject(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<void> {
-    await this.projectService.modifyProject(id, updateProjectDto);
+  ): Promise<project> {
+    return await this.projectService.modifyProject(id, updateProjectDto);
   }
 
   /**

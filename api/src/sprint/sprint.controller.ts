@@ -45,14 +45,14 @@ export class SprintController {
    *
    * @param id Id del sprint
    * @param modifySprintDto Datos para actualizar
+   * @return {sprint} Sprint modificado
    */
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async modifySprint(
     @Param('id', ParseIntPipe) id: number,
     @Body() modifySprintDto: ModifySprintDto,
-  ): Promise<void> {
-    await this.sprintService.modifySprint(id, modifySprintDto);
+  ): Promise<sprint> {
+    return await this.sprintService.modifySprint(id, modifySprintDto);
   }
 
   /**

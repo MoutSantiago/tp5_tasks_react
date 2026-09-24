@@ -101,8 +101,9 @@ export class TaskService {
    * @param {number} id Id de la tarea que se quiere editar
    * @param {EditTaskDto} editTaskDto Parametros que se desean cambiar de la tarea
    * @throws {NotFoundException} Si no se encuentra ninguna tarea o está cerrada
+   * @returns {Promise<task>} Tarea con los datos modificados
    */
-  async editTask(id: number, editTaskDto: EditTaskDto): Promise<void> {
+  async editTask(id: number, editTaskDto: EditTaskDto): Promise<task> {
     const task: task | null = await this.prisma.task.findFirst({
       where: {
         id,
@@ -114,7 +115,7 @@ export class TaskService {
       throw new NotFoundException('Task not found or already closed');
     }
 
-    await this.prisma.task.update({
+    return await this.prisma.task.update({
       where: { id },
       data: editTaskDto,
     });
@@ -178,7 +179,7 @@ export class TaskService {
    * @throws {NotFoundException} Si la tarea no se encontro o ya esta cerrada
    * @throws {ConflictException} Si la tarea tiene dependencias incompletas
    */
-  async closeTask(id: number): Promise<void> {
+  async closeTask(id: number): Promise<task> {
     const task: task | null = await this.prisma.task.findFirst({
       where: {
         id,
@@ -205,7 +206,7 @@ export class TaskService {
       throw new ConflictException('This task has incomplete dependencies');
     }
 
-    await this.prisma.task.update({
+    return await this.prisma.task.update({
       where: { id: id },
       data: { status: 'done', closed_at: new Date() },
     });

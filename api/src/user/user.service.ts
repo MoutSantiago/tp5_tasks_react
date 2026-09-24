@@ -35,11 +35,12 @@ export class UserService {
    * Modifica el parametro nombre de un ususario seleccionado mediante id
    *
    * @async
-   * @param id Id del usuario a modificar
-   * @param name Nombre que se desea poner
+   * @param {number} id Id del usuario a modificar
+   * @param {string} name Nombre que se desea poner
+   * @return {Promise<user>} Usuario modificado
    */
-  async modifyName(id: number, name: string): Promise<void> {
-    await this.prisma.app_user.update({ where: { id }, data: { name } });
+  async modifyName(id: number, name: string): Promise<app_user> {
+    return await this.prisma.app_user.update({ where: { id }, data: { name } });
   }
 
   /**

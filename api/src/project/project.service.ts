@@ -38,12 +38,16 @@ export class ProjectService {
    * @async
    * @param {number} id Id del proyecto a modificar
    * @param {UpdateProjectDto} updateProjectDto Datos a modificar en la base de datos
+   * @return {Promise<project>} Proyecto con los valores modificados
    */
   async modifyProject(
     id: number,
     updateProjectDto: UpdateProjectDto,
-  ): Promise<void> {
-    await this.prisma.project.update({ where: { id }, data: updateProjectDto });
+  ): Promise<project> {
+    return await this.prisma.project.update({
+      where: { id },
+      data: updateProjectDto,
+    });
   }
 
   /**

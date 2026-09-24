@@ -58,12 +58,16 @@ export class SprintService {
    * @async
    * @param {number} id Id del sprint que se quiere modificar
    * @param {ModifySprintDto} modifySprintDto Datos que se quieren cambiar del sprint
+   * @return {Promise<sprint>} Sprint con datos modificados
    */
   async modifySprint(
     id: number,
     modifySprintDto: ModifySprintDto,
-  ): Promise<void> {
-    await this.prisma.sprint.update({ where: { id }, data: modifySprintDto });
+  ): Promise<sprint> {
+    return await this.prisma.sprint.update({
+      where: { id },
+      data: modifySprintDto,
+    });
   }
 
   /**

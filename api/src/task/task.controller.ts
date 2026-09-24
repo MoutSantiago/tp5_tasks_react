@@ -67,14 +67,14 @@ export class TaskController {
    *
    * @param {number} id Id de la tarea a modificar
    * @param {EditTaskDto} editTaskDto Datos a modificar
+   * @return {Promise<task>} Tarea madificada
    */
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async editTask(
     @Param('id', ParseIntPipe) id: number,
     @Body() editTaskDto: EditTaskDto,
-  ): Promise<void> {
-    await this.taskService.editTask(id, editTaskDto);
+  ): Promise<task> {
+    return await this.taskService.editTask(id, editTaskDto);
   }
 
   /**
@@ -96,11 +96,11 @@ export class TaskController {
    * Cierra una tarea
    *
    * @param {number} id Id de la tarea a cerrar
+   * @return {Promise<task>} Tarea madificada
    */
   @Put('close/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async closeTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.taskService.closeTask(id);
+  async closeTask(@Param('id', ParseIntPipe) id: number): Promise<task> {
+    return await this.taskService.closeTask(id);
   }
 
   /**
