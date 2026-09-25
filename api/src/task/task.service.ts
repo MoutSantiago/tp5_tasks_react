@@ -8,9 +8,45 @@ import { PrismaService } from '../prisma/prisma.service';
 
 import { CreateTaskDto } from './dto/createTask.dto';
 import { EditTaskDto } from './dto/editTask.dto';
-import { precondition, task, task_state } from '@prisma/client';
+import { $Enums, precondition, task, task_state } from '@prisma/client';
 import { AttachTaskDto } from './dto/attachTask.dto';
 import { TaskResponseDto } from './dto/taskResponse.dto';
+
+type RecivedTask = {
+  dependencies: ({
+    independent_task: {
+      id: number;
+      summary: string;
+      closed_at: Date | null;
+    };
+  } & {
+    id: number;
+    dependent_task_id: number;
+    independent_task_id: number;
+  })[];
+  assignee: {
+    name: string;
+  } | null;
+  reporter: {
+    name: string;
+  };
+  sprint: {
+    name: string;
+    id: number;
+  };
+} & {
+  id: number;
+  summary: string;
+  description: string;
+  activity: $Enums.activity;
+  status: $Enums.task_state;
+  priority: $Enums.priority;
+  created_at: Date;
+  closed_at: Date | null;
+  sprint_id: number;
+  reporter_id: number;
+  assignee_id: number | null;
+};
 
 /**
  * Servicio con las reglas de negocio relacionadas con la manipulación de datos
@@ -19,6 +55,66 @@ import { TaskResponseDto } from './dto/taskResponse.dto';
 @Injectable()
 export class TaskService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private readonly prismaIncludeTask = {
+    reporter: {
+      select: {
+        name: true,
+      },
+    },
+    assignee: {
+      select: {
+        name: true,
+      },
+    },
+    sprint: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+    dependencies: {
+      include: {
+        independent_task: {
+          select: {
+            id: true,
+            summary: true,
+            closed_at: true,
+          },
+        },
+      },
+    },
+  };
+
+  /**
+   * Cambia el formato de las tareas recibidas mediante prisma {RecivedTask} al
+   * formato que se desea enviar {TaskResponseDto}
+   *
+   * @param {RecivedTask} task Tarea desesturcutada para eliminar los atributos que
+   * no se desean enviar y que typescript no se queje
+   * @returns {TaskResponseDto} Tarea formateada
+   */
+  private taskFormater({
+    reporter_id,
+    assignee_id,
+    sprint_id,
+    reporter,
+    assignee,
+    sprint,
+    ...task
+  }: RecivedTask): TaskResponseDto {
+    return {
+      ...task,
+      dependencies: task.dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+      reporter: reporter.name,
+      assignee: assignee ? assignee.name : null,
+      sprint: sprint,
+    };
+  }
 
   /**
    * Verifica si establecer una dependencia entre dos tareas generaria un ciclo
@@ -69,29 +165,11 @@ export class TaskService {
    */
   async getTasks(): Promise<TaskResponseDto[]> {
     const tasks = await this.prisma.task.findMany({
-      include: {
-        dependencies: {
-          include: {
-            independent_task: {
-              select: {
-                id: true,
-                summary: true,
-                closed_at: true,
-              },
-            },
-          },
-        },
-      },
+      orderBy: { id: 'asc' },
+      include: this.prismaIncludeTask,
     });
 
-    return tasks.map(({ dependencies, ...task }) => ({
-      ...task,
-      dependencies: dependencies.map(({ independent_task }) => ({
-        id: independent_task.id,
-        summary: independent_task.summary,
-        closed: independent_task.closed_at ? true : false,
-      })),
-    }));
+    return tasks.map((task) => this.taskFormater(task));
   }
 
   /**
@@ -104,31 +182,12 @@ export class TaskService {
   async getTask(id: number): Promise<TaskResponseDto | void> {
     const task = await this.prisma.task.findUnique({
       where: { id },
-      include: {
-        dependencies: {
-          include: {
-            independent_task: {
-              select: {
-                id: true,
-                summary: true,
-                closed_at: true,
-              },
-            },
-          },
-        },
-      },
+      include: this.prismaIncludeTask,
     });
 
     if (!task) return;
 
-    return {
-      ...task,
-      dependencies: task.dependencies.map(({ independent_task }) => ({
-        id: independent_task.id,
-        summary: independent_task.summary,
-        closed: independent_task.closed_at ? true : false,
-      })),
-    };
+    return this.taskFormater(task);
   }
 
   /**
@@ -142,29 +201,10 @@ export class TaskService {
   async createTask(createTaskDto: CreateTaskDto): Promise<TaskResponseDto> {
     const newTask = await this.prisma.task.create({
       data: createTaskDto,
-      include: {
-        dependencies: {
-          include: {
-            independent_task: {
-              select: {
-                id: true,
-                summary: true,
-                closed_at: true,
-              },
-            },
-          },
-        },
-      },
+      include: this.prismaIncludeTask,
     });
 
-    return {
-      ...newTask,
-      dependencies: newTask.dependencies.map(({ independent_task }) => ({
-        id: independent_task.id,
-        summary: independent_task.summary,
-        closed: independent_task.closed_at ? true : false,
-      })),
-    };
+    return this.taskFormater(newTask);
   }
 
   /**
@@ -214,29 +254,10 @@ export class TaskService {
         ...editTaskDto,
         closed_at: editTaskDto.status === 'done' ? new Date() : null,
       },
-      include: {
-        dependencies: {
-          include: {
-            independent_task: {
-              select: {
-                id: true,
-                summary: true,
-                closed_at: true,
-              },
-            },
-          },
-        },
-      },
+      include: this.prismaIncludeTask,
     });
 
-    return {
-      ...updatedTask,
-      dependencies: updatedTask.dependencies.map(({ independent_task }) => ({
-        id: independent_task.id,
-        summary: independent_task.summary,
-        closed: independent_task.closed_at ? true : false,
-      })),
-    };
+    return this.taskFormater(updatedTask);
   }
 
   /**
@@ -328,29 +349,10 @@ export class TaskService {
     const closedTask = await this.prisma.task.update({
       where: { id: id },
       data: { status: 'done', closed_at: new Date() },
-      include: {
-        dependencies: {
-          include: {
-            independent_task: {
-              select: {
-                id: true,
-                summary: true,
-                closed_at: true,
-              },
-            },
-          },
-        },
-      },
+      include: this.prismaIncludeTask,
     });
 
-    return {
-      ...closedTask,
-      dependencies: closedTask.dependencies.map(({ independent_task }) => ({
-        id: independent_task.id,
-        summary: independent_task.summary,
-        closed: independent_task.closed_at ? true : false,
-      })),
-    };
+    return this.taskFormater(closedTask);
   }
 
   /**

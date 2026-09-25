@@ -44,14 +44,14 @@ model task {
   priority     priority       @default(should)
   created_at   DateTime       @default(dbgenerated("CURRENT_DATE")) @db.Date
   closed_at    DateTime?      @db.Date
-  sprint_id    Int?
-  reporter_id  Int?
+  sprint_id    Int
+  reporter_id  Int
   assignee_id  Int?
   dependencies precondition[] @relation("dependent")
   dependents   precondition[] @relation("independent")
   assignee     app_user?      @relation("assignee", fields: [assignee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reporter     app_user?      @relation("reporter", fields: [reporter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sprint       sprint?        @relation(fields: [sprint_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reporter     app_user       @relation("reporter", fields: [reporter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sprint       sprint         @relation(fields: [sprint_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model precondition {

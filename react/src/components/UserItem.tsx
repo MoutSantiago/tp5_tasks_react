@@ -10,8 +10,8 @@ import type { UserItemProps } from "../types/props";
 export default function UserItem({ user, func }: UserItemProps): JSX.Element {
 	return (
 		<div className="list-item" onClick={() => func()}>
-			<div className="list-item__top">
-				<span className="list-item__title">{user.name}</span>
+			<div className="list-item__top row-between">
+				<span className="list-item__title text-md font-medium">{user.name}</span>
 			</div>
 		</div>
 	);

@@ -15,7 +15,6 @@ import type { Project, User } from "../types/data";
  * @param projects - Proyectos a listar, si se proveen tienen prioridad.
  * @param users - Usuarios a listar, si se proveen tienen prioridad sobre values.
  * @param func - Acción para agregar o editar elementos.
- * @param select - Acción al seleccionar un proyecto.
  */
 export default function InfoCard({
 	title,
@@ -23,15 +22,10 @@ export default function InfoCard({
 	projects,
 	users,
 	func,
-	select,
 }: InfoCardProps): JSX.Element {
 	const items: JSX.Element[] | undefined = projects
 		? projects.map((project: Project) => (
-				<ProjectItem
-					key={project.id}
-					project={project}
-					select={select ?? (() => undefined)}
-				/>
+				<ProjectItem key={project.id} project={project} />
 			))
 		: users
 			? users.map((user: User) => (
@@ -52,11 +46,11 @@ export default function InfoCard({
 		values?.length ?? projects?.length ?? users?.length ?? 0;
 
 	return (
-		<article className="card">
-			<header className="card__header">
-				<div className="card__header-title-group">
+		<article className="card surface radius-lg shadow-card hover-lift">
+			<header className="card__header row-between">
+				<div className="card__header-title-group flex items-baseline gap-2 minw-0">
 					<h2 className="card__title">{title}</h2>
-					<span className="card__count">{count}</span>
+					<span className="card__count pill pill--accent">{count}</span>
 				</div>
 				<button
 					className="icon-button icon-button--accent"

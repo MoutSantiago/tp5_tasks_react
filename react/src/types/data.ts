@@ -22,9 +22,12 @@ export type Task = {
   priority: Priority;
   created_at: Date;
   closed_at: Date | undefined;
-  sprint_id: number;
-  reporter_id: number;
-  assignee_id: number | undefined;
+  sprint: {
+    id: number;
+    name: string;
+  };
+  reporter: string;
+  assignee: string | undefined;
   dependencies: {
     id: number;
     summary: string;

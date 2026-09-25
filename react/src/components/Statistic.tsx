@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { selectChart } from "../types/selection";
 import type { StatisticProps } from "../types/props";
 
 /**
@@ -8,27 +9,23 @@ import type { StatisticProps } from "../types/props";
  * @param value - Valor numérico a destacar.
  * @param change - Variación en texto (ej. "+12%").
  * @param increasing - Indica si la variación es positiva.
- * @param select - Acción al clickear la tarjeta.
  */
 export default function Statistic({
 	title,
 	value,
 	change,
 	increasing = true,
-	select,
 }: StatisticProps): JSX.Element {
 	return (
 		<article
-			className="stat-card"
-			onClick={() =>
-				select({ type: "chart", task: undefined, project: undefined })
-			}
+			className="stat-card surface radius-lg shadow-card hover-lift"
+			onClick={selectChart}
 		>
-			<div className="stat-card__header">
-				<h3 className="stat-card__title">{title}</h3>
+			<div className="stat-card__header row-between">
+				<h3 className="stat-card__title text-sm text-muted font-medium">{title}</h3>
 				<span
-					className={`stat-card__trend ${
-						increasing ? "stat-card__trend--up" : "stat-card__trend--down"
+					className={`pill ${
+						increasing ? "pill--success" : "pill--danger"
 					}`}
 				>
 					{change}

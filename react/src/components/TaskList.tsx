@@ -9,22 +9,23 @@ import type { Task } from "../types/data";
  * @param title - Título de la sección.
  * @param tasks - Tareas a listar.
  * @param func - Acción para agregar una tarea.
- * @param select - Acción al seleccionar una tarea.
  */
 export default function TaskList({
 	title,
 	tasks,
 	func,
-	select,
 }: TaskListProps): JSX.Element {
 	return (
-		<section className="card card--tasks" aria-labelledby="task-list-title">
-			<header className="card__header">
-				<div className="card__header-title-group">
+		<section
+			className="card card--tasks surface radius-lg shadow-card hover-lift"
+			aria-labelledby="task-list-title"
+		>
+			<header className="card__header row-between">
+				<div className="card__header-title-group flex items-baseline gap-2 minw-0">
 					<h2 id="task-list-title" className="card__title">
 						{title}
 					</h2>
-					<span className="card__count">{tasks.length}</span>
+					<span className="card__count pill pill--accent">{tasks.length}</span>
 				</div>
 				<button
 					className="icon-button icon-button--accent"
@@ -38,7 +39,7 @@ export default function TaskList({
 			<div className="card__body">
 				{tasks.map(
 					(task: Task): JSX.Element => (
-						<LinearTask key={task.id} task={task} select={select} />
+						<LinearTask key={task.id} task={task} />
 					),
 				)}
 			</div>

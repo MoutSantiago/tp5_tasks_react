@@ -13,9 +13,12 @@ export class TaskResponseDto {
   priority: $Enums.priority;
   created_at: Date;
   closed_at: Date | null;
-  sprint_id: number | null;
-  reporter_id: number | null;
-  assignee_id: number | null;
+  sprint: {
+    id: number;
+    name: string;
+  };
+  reporter: string;
+  assignee: string | null;
   dependencies: {
     id: number;
     summary: string;

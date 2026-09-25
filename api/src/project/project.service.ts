@@ -19,6 +19,7 @@ export class ProjectService {
    */
   async getProjects(): Promise<ProjectReturnDto[]> {
     return await this.prisma.project.findMany({
+      orderBy: { id: 'asc' },
       include: {
         sprints: {},
       },

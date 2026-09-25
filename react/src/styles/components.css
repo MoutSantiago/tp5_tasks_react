@@ -1,0 +1,149 @@
+/* ------------------------------------------------------------------ */
+/* Ítem de lista                                                       */
+/* ------------------------------------------------------------------ */
+
+.list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+}
+
+.list-item + .list-item {
+  border-top: 1px solid var(--color-border);
+}
+
+/* ------------------------------------------------------------------ */
+/* Tarea / Sprints                                                    */
+/* ------------------------------------------------------------------ */
+
+.task,
+.sprint {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.task:hover {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.task--done {
+  opacity: 0.55;
+}
+
+.task--done .task__summary {
+  text-decoration: line-through;
+}
+
+.task__id,
+.sprint__id {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.task__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.task__users-container {
+  padding-top: 0.2rem;
+  border-top: solid 1px var(--color-border);
+}
+
+/* ------------------------------------------------------------------ */
+/* Etiquetas                                                           */
+/* ------------------------------------------------------------------ */
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.tag-type {
+  box-sizing: border-box;
+  background-color: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.tag-state {
+  background-color: var(--color-accent);
+}
+
+.tag-priority--must {
+  color: #ee8282;
+  background-color: #f8717164;
+}
+
+.tag-priority--should {
+  color: #fc8115;
+  background-color: #fb994264;
+}
+
+.tag-priority--could {
+  color: #14d53b;
+  background-color: #2ed04e64;
+}
+
+.tag-priority--wont {
+  color: #6584e1;
+  background-color: #2f5eed64;
+}
+
+/* ------------------------------------------------------------------ */
+/* Botón de icono                                                      */
+/* ------------------------------------------------------------------ */
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.125rem;
+  height: 2.125rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.icon-button:hover {
+  border-color: rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text);
+}
+
+.icon-button--accent {
+  border: none;
+  background: var(--gradient-accent);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(124, 108, 246, 0.35);
+}
+
+.icon-button--accent:hover {
+  background: var(--gradient-accent);
+  filter: brightness(1.1);
+  color: #fff;
+}

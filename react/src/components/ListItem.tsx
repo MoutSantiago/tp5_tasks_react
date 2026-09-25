@@ -15,10 +15,10 @@ export default function ListItem({
 }: ListItemProps): JSX.Element {
 	return (
 		<div className="list-item" onClick={() => func()}>
-			<div className="list-item__top">
-				<span className="list-item__title">{title}</span>
+			<div className="list-item__top row-between">
+				<span className="list-item__title text-md font-medium">{title}</span>
 			</div>
-			<span className="list-item__subtitle">{subtitle}</span>
+			<span className="list-item__subtitle text-xs text-muted">{subtitle}</span>
 		</div>
 	);
 }

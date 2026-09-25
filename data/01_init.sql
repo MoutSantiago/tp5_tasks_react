@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS task (
     priority priority NOT NULL DEFAULT 'should',
     created_at DATE NOT NULL DEFAULT CURRENT_DATE,
     closed_at DATE,
-    sprint_id INT,
-    reporter_id INT,
+    sprint_id INT NOT NULL,
+    reporter_id INT NOT NULL,
     assignee_id INT,
 
     FOREIGN KEY (sprint_id)
