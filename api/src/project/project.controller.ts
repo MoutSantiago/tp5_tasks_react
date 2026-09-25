@@ -11,9 +11,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { project } from '@prisma/client';
 import { CreateProjectDto } from './dto/createProject.dto';
 import { UpdateProjectDto } from './dto/updateProject.dto';
+import { ProjectReturnDto } from './dto/projectReturn.dto';
 
 /**
  * Controlador para gestionar los proyectos
@@ -25,10 +25,10 @@ export class ProjectController {
   /**
    * Obiene todos los proyectos
    *
-   * @returns {Promise<project[]>} Proyectos encontrados
+   * @returns {Promise<ProjectReturnDto[]>} Proyectos encontrados
    */
   @Get()
-  async getProjects(): Promise<project[]> {
+  async getProjects(): Promise<ProjectReturnDto[]> {
     return await this.projectService.getProjects();
   }
 
@@ -36,13 +36,13 @@ export class ProjectController {
    * Crea nuevos proyectos
    *
    * @param createProjectDto Datos para crear proyecto
-   * @returns {Promise<project>} Proyecto creado
+   * @returns {Promise<ProjectReturnDto>} Proyecto creado
    */
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async addProject(
     @Body() createProjectDto: CreateProjectDto,
-  ): Promise<project> {
+  ): Promise<ProjectReturnDto> {
     return await this.projectService.addProject(createProjectDto);
   }
 
@@ -51,13 +51,13 @@ export class ProjectController {
    *
    * @param id Id de lproyecto
    * @param updateProjectDto Datos a modificar
-   * @return {Promise<project>} Proyecto editado
+   * @return {Promise<ProjectReturnDto>} Proyecto editado
    */
   @Put(':id')
   async modifyProject(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<project> {
+  ): Promise<ProjectReturnDto> {
     return await this.projectService.modifyProject(id, updateProjectDto);
   }
 

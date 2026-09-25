@@ -24,6 +24,9 @@ export class EditTaskDto {
   @IsOptional()
   activity?: activity;
 
+  @IsEnum(task_state)
+  status?: task_state;
+
   @IsEnum(priority)
   @IsOptional()
   priority?: priority;

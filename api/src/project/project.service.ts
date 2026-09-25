@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { project } from '@prisma/client';
 import { CreateProjectDto } from './dto/createProject.dto';
 import { UpdateProjectDto } from './dto/updateProject.dto';
+import { ProjectReturnDto } from './dto/projectReturn.dto';
 
 /**
  * Servicio con la logica para manejar los datos de los proyectos
@@ -15,10 +15,14 @@ export class ProjectService {
    * Obtiene todos los proyectos presentes en la base de datos
    *
    * @async
-   * @returns {Promise<project[]>} Todos los proyectos de la base de datos
+   * @returns {Promise<ProjectReturnDto[]>} Todos los proyectos de la base de datos
    */
-  async getProjects(): Promise<project[]> {
-    return await this.prisma.project.findMany();
+  async getProjects(): Promise<ProjectReturnDto[]> {
+    return await this.prisma.project.findMany({
+      include: {
+        sprints: {},
+      },
+    });
   }
 
   /**
@@ -26,10 +30,17 @@ export class ProjectService {
    *
    * @async
    * @param {CreateProjectDto} createProjectDto Datos de creación de proyectos
-   * @returns {Promise<project>} Proyecto creado
+   * @returns {Promise<ProjectReturnDto>} Proyecto creado
    */
-  async addProject(createProjectDto: CreateProjectDto): Promise<project> {
-    return await this.prisma.project.create({ data: createProjectDto });
+  async addProject(
+    createProjectDto: CreateProjectDto,
+  ): Promise<ProjectReturnDto> {
+    return await this.prisma.project.create({
+      data: createProjectDto,
+      include: {
+        sprints: {},
+      },
+    });
   }
 
   /**
@@ -38,15 +49,18 @@ export class ProjectService {
    * @async
    * @param {number} id Id del proyecto a modificar
    * @param {UpdateProjectDto} updateProjectDto Datos a modificar en la base de datos
-   * @return {Promise<project>} Proyecto con los valores modificados
+   * @return {Promise<ProjectReturnDto>} Proyecto con los valores modificados
    */
   async modifyProject(
     id: number,
     updateProjectDto: UpdateProjectDto,
-  ): Promise<project> {
+  ): Promise<ProjectReturnDto> {
     return await this.prisma.project.update({
       where: { id },
       data: updateProjectDto,
+      include: {
+        sprints: {},
+      },
     });
   }
 

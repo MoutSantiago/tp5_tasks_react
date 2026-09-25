@@ -10,6 +10,7 @@ import { CreateTaskDto } from './dto/createTask.dto';
 import { EditTaskDto } from './dto/editTask.dto';
 import { precondition, task, task_state } from '@prisma/client';
 import { AttachTaskDto } from './dto/attachTask.dto';
+import { TaskResponseDto } from './dto/taskResponse.dto';
 
 /**
  * Servicio con las reglas de negocio relacionadas con la manipulación de datos
@@ -64,10 +65,33 @@ export class TaskService {
    * Busca todas las tareas disponibles en la base de datos y las retorna
    *
    * @async
-   * @returns {Promise<task[]>} Las tareas cargadas en al base de datos
+   * @returns {Promise<TaskResponseDto[]>} Las tareas cargadas en al base de datos
    */
-  async getTasks(): Promise<task[]> {
-    return await this.prisma.task.findMany();
+  async getTasks(): Promise<TaskResponseDto[]> {
+    const tasks = await this.prisma.task.findMany({
+      include: {
+        dependencies: {
+          include: {
+            independent_task: {
+              select: {
+                id: true,
+                summary: true,
+                closed_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return tasks.map(({ dependencies, ...task }) => ({
+      ...task,
+      dependencies: dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+    }));
   }
 
   /**
@@ -75,10 +99,36 @@ export class TaskService {
    *
    * @async
    * @param {number} id El id de la tarea a buscar
-   * @returns {Promise<task | null>} La tarea buscada si es que existe
+   * @returns {Promise<TaskResponseDto>} La tarea buscada si es que existe
    */
-  async getTask(id: number): Promise<task | null> {
-    return await this.prisma.task.findUnique({ where: { id: id } });
+  async getTask(id: number): Promise<TaskResponseDto | void> {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+      include: {
+        dependencies: {
+          include: {
+            independent_task: {
+              select: {
+                id: true,
+                summary: true,
+                closed_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!task) return;
+
+    return {
+      ...task,
+      dependencies: task.dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+    };
   }
 
   /**
@@ -89,8 +139,32 @@ export class TaskService {
    * @param {CreateTaskDto} createTaskDto Datos para crear la nueva tarea
    * @returns {Promise<task>} La tarea creada
    */
-  async createTask(createTaskDto: CreateTaskDto): Promise<task> {
-    return await this.prisma.task.create({ data: createTaskDto });
+  async createTask(createTaskDto: CreateTaskDto): Promise<TaskResponseDto> {
+    const newTask = await this.prisma.task.create({
+      data: createTaskDto,
+      include: {
+        dependencies: {
+          include: {
+            independent_task: {
+              select: {
+                id: true,
+                summary: true,
+                closed_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      ...newTask,
+      dependencies: newTask.dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+    };
   }
 
   /**
@@ -101,24 +175,68 @@ export class TaskService {
    * @param {number} id Id de la tarea que se quiere editar
    * @param {EditTaskDto} editTaskDto Parametros que se desean cambiar de la tarea
    * @throws {NotFoundException} Si no se encuentra ninguna tarea o está cerrada
-   * @returns {Promise<task>} Tarea con los datos modificados
+   * @returns {Promise<TaskResponseDto>} Tarea con los datos modificados
    */
-  async editTask(id: number, editTaskDto: EditTaskDto): Promise<task> {
+  async editTask(
+    id: number,
+    editTaskDto: EditTaskDto,
+  ): Promise<TaskResponseDto> {
     const task: task | null = await this.prisma.task.findFirst({
       where: {
         id,
-        closed_at: null,
       },
     });
 
-    if (!task) {
-      throw new NotFoundException('Task not found or already closed');
+    if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+
+    if (task.closed_at != null)
+      throw new ConflictException('Task has been closed');
+
+    if (editTaskDto.status === 'done') {
+      const hasIncomplete =
+        (await this.prisma.precondition.findFirst({
+          where: {
+            dependent_task_id: id,
+            independent_task: {
+              status: { not: 'done' },
+            },
+          },
+          select: { independent_task_id: true },
+        })) !== null;
+
+      if (hasIncomplete)
+        throw new ConflictException('This task has incomplete dependencies');
     }
 
-    return await this.prisma.task.update({
+    const updatedTask = await this.prisma.task.update({
       where: { id },
-      data: editTaskDto,
+      data: {
+        ...editTaskDto,
+        closed_at: editTaskDto.status === 'done' ? new Date() : null,
+      },
+      include: {
+        dependencies: {
+          include: {
+            independent_task: {
+              select: {
+                id: true,
+                summary: true,
+                closed_at: true,
+              },
+            },
+          },
+        },
+      },
     });
+
+    return {
+      ...updatedTask,
+      dependencies: updatedTask.dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+    };
   }
 
   /**
@@ -178,8 +296,9 @@ export class TaskService {
    * @param {number} id Id de la tarea que se quiere cerrar
    * @throws {NotFoundException} Si la tarea no se encontro o ya esta cerrada
    * @throws {ConflictException} Si la tarea tiene dependencias incompletas
+   * @returns {Promise<TaskResponseDto>}
    */
-  async closeTask(id: number): Promise<task> {
+  async closeTask(id: number): Promise<TaskResponseDto> {
     const task: task | null = await this.prisma.task.findFirst({
       where: {
         id,
@@ -206,10 +325,32 @@ export class TaskService {
       throw new ConflictException('This task has incomplete dependencies');
     }
 
-    return await this.prisma.task.update({
+    const closedTask = await this.prisma.task.update({
       where: { id: id },
       data: { status: 'done', closed_at: new Date() },
+      include: {
+        dependencies: {
+          include: {
+            independent_task: {
+              select: {
+                id: true,
+                summary: true,
+                closed_at: true,
+              },
+            },
+          },
+        },
+      },
     });
+
+    return {
+      ...closedTask,
+      dependencies: closedTask.dependencies.map(({ independent_task }) => ({
+        id: independent_task.id,
+        summary: independent_task.summary,
+        closed: independent_task.closed_at ? true : false,
+      })),
+    };
   }
 
   /**

@@ -8,9 +8,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// Enums
-// ============================================
+model project {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(30)
+  description String?
+  created_at  DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  sprints     sprint[]
+}
+
+model app_user {
+  id             Int      @id @default(autoincrement())
+  name           String   @db.VarChar(30)
+  created_at     DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  assigned_tasks task[]   @relation("assignee")
+  reported_tasks task[]   @relation("reporter")
+}
+
+model sprint {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(30)
+  start_date DateTime     @default(dbgenerated("CURRENT_DATE")) @db.Date
+  end_date   DateTime?    @db.Date
+  status     sprint_state @default(planned)
+  project_id Int
+  project    project      @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tasks      task[]
+}
+
+model task {
+  id           Int            @id @default(autoincrement())
+  summary      String         @db.VarChar(150)
+  description  String
+  activity     activity
+  status       task_state     @default(backlog)
+  priority     priority       @default(should)
+  created_at   DateTime       @default(dbgenerated("CURRENT_DATE")) @db.Date
+  closed_at    DateTime?      @db.Date
+  sprint_id    Int?
+  reporter_id  Int?
+  assignee_id  Int?
+  dependencies precondition[] @relation("dependent")
+  dependents   precondition[] @relation("independent")
+  assignee     app_user?      @relation("assignee", fields: [assignee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reporter     app_user?      @relation("reporter", fields: [reporter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sprint       sprint?        @relation(fields: [sprint_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model precondition {
+  id                  Int  @id @default(autoincrement())
+  dependent_task_id   Int
+  independent_task_id Int
+  dependent_task      task @relation("dependent", fields: [dependent_task_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  independent_task    task @relation("independent", fields: [independent_task_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([dependent_task_id, independent_task_id])
+}
 
 enum activity {
   bug
@@ -40,70 +92,4 @@ enum sprint_state {
   active
   completed
   cancelled
-}
-
-// ============================================
-// Models
-// ============================================
-
-model project {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(30)
-  description String?
-  created_at  DateTime @default(now()) @db.Date
-
-  sprints sprint[]
-}
-
-model app_user {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(30)
-  created_at DateTime @default(now()) @db.Date
-
-  reported_tasks task[] @relation("reporter")
-  assigned_tasks task[] @relation("assignee")
-}
-
-model sprint {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(30)
-  start_date DateTime     @default(now()) @db.Date
-  end_date   DateTime?    @db.Date
-  status     sprint_state @default(planned)
-  project_id Int
-
-  project project @relation(fields: [project_id], references: [id])
-  tasks   task[]
-}
-
-model task {
-  id          Int        @id @default(autoincrement())
-  summary     String?    @db.VarChar(150)
-  description String?
-  activity    activity?
-  status      task_state @default(backlog)
-  priority    priority   @default(should)
-  created_at  DateTime   @default(now()) @db.Date
-  closed_at   DateTime?  @db.Date
-  sprint_id   Int?
-  reporter_id Int?
-  assignee_id Int?
-
-  sprint   sprint?   @relation(fields: [sprint_id], references: [id])
-  reporter app_user? @relation("reporter", fields: [reporter_id], references: [id])
-  assignee app_user? @relation("assignee", fields: [assignee_id], references: [id])
-
-  dependents   precondition[] @relation("dependent")
-  dependencies precondition[] @relation("independent")
-}
-
-model precondition {
-  id                  Int @id @default(autoincrement())
-  dependent_task_id   Int
-  independent_task_id Int
-
-  dependent_task   task @relation("dependent", fields: [dependent_task_id], references: [id])
-  independent_task task @relation("independent", fields: [independent_task_id], references: [id])
-
-  @@unique([dependent_task_id, independent_task_id])
 }

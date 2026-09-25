@@ -14,10 +14,11 @@ import {
 import { TaskService } from './task.service';
 
 import { CreateTaskDto } from './dto/createTask.dto';
-import { task, task_state } from '@prisma/client';
+import { task_state } from '@prisma/client';
 import { EditTaskDto } from './dto/editTask.dto';
 import { AttachTaskDto } from './dto/attachTask.dto';
 import { StateTaskDto } from './dto/stateTask.dto';
+import { TaskResponseDto } from './dto/taskResponse.dto';
 
 /**
  * Controlador encargado de gestionar las tareas
@@ -29,10 +30,10 @@ export class TaskController {
   /**
    * Obtiene todas las tareas
    *
-   * @returns {Promise<task[]>} Las tareas encontradas
+   * @returns {Promise<TaskResponseDto[]>} Las tareas encontradas
    */
   @Get()
-  async getTasks(): Promise<task[]> {
+  async getTasks(): Promise<TaskResponseDto[]> {
     return await this.taskService.getTasks();
   }
 
@@ -40,13 +41,16 @@ export class TaskController {
    * Obtiene una tarea mediante su id
    *
    * @param {number} id Id de la tarea buscada
-   * @returns {Promise<task>} La tarea buscada
+   * @returns {Promise<TaskResponseDto>} La tarea buscada
    */
   @Get(':id')
-  async getTask(@Param('id', ParseIntPipe) id: number): Promise<task> {
-    const task: task | null = await this.taskService.getTask(id);
+  async getTask(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<TaskResponseDto> {
+    const task: TaskResponseDto | void = await this.taskService.getTask(id);
 
     if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+
     return task;
   }
 
@@ -54,26 +58,28 @@ export class TaskController {
    * Crea una tarea nueva
    *
    * @param {CreateTaskDto} createTaskDto Datos para crear una tarea
-   * @returns {Promise<task>} La tarea creada
+   * @returns {Promise<TaskResponseDto>} La tarea creada
    */
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createTask(@Body() createTaskDto: CreateTaskDto): Promise<task> {
+  async createTask(
+    @Body() createTaskDto: CreateTaskDto,
+  ): Promise<TaskResponseDto> {
     return await this.taskService.createTask(createTaskDto);
   }
 
   /**
    * Modifica los datos de una tarea
    *
-   * @param {number} id Id de la tarea a modificar
-   * @param {EditTaskDto} editTaskDto Datos a modificar
-   * @return {Promise<task>} Tarea madificada
+   * @param id Id de la tarea a modificar
+   * @param editTaskDto Datos a modificar
+   * @return {Promise<TaskResponseDto>} Tarea madificada
    */
   @Put(':id')
   async editTask(
     @Param('id', ParseIntPipe) id: number,
     @Body() editTaskDto: EditTaskDto,
-  ): Promise<task> {
+  ): Promise<TaskResponseDto> {
     return await this.taskService.editTask(id, editTaskDto);
   }
 
@@ -95,11 +101,13 @@ export class TaskController {
   /**
    * Cierra una tarea
    *
-   * @param {number} id Id de la tarea a cerrar
-   * @return {Promise<task>} Tarea madificada
+   * @param id Id de la tarea a cerrar
+   * @return {Promise<TaskResponseDto>} Tarea madificada
    */
   @Put('close/:id')
-  async closeTask(@Param('id', ParseIntPipe) id: number): Promise<task> {
+  async closeTask(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<TaskResponseDto> {
     return await this.taskService.closeTask(id);
   }
 
