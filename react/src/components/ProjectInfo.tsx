@@ -1,6 +1,9 @@
+import Tag from "./Tag";
+import { useModal } from "./modals/ModalProvider";
+
 import type { JSX } from "react";
 import type { Project, Sprint } from "../types/data";
-import Tag from "./Tag";
+import type { OnExecute } from "../types/props";
 
 /**
  * Vista detallada de un proyecto, con su descripción y botón para editarlo.
@@ -10,11 +13,13 @@ import Tag from "./Tag";
  */
 export default function ProjectInfo({
   project,
-  func,
+  onExecute,
 }: {
   project: Project;
-  func: Function;
+  onExecute: OnExecute;
 }): JSX.Element {
+  const { openModal } = useModal();
+
   return (
     <>
       <header className="card__header row-between">
@@ -24,7 +29,7 @@ export default function ProjectInfo({
           className="icon-button icon-button--accent"
           type="button"
           aria-label={`Editar ${project.name.toLowerCase()}`}
-          onClick={() => func()}
+          onClick={() => openModal("editProject", { project, onExecute })}
         >
           <span aria-hidden="true">+</span>
         </button>

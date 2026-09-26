@@ -1,9 +1,9 @@
-import type { Project, Task, User } from "./data";
+import type { Project, Task, TaskStatus, User } from "./data";
 
 export type TaskListProps = {
   title: string;
   tasks: Task[];
-  func: Function;
+  onExecute: () => Promise<void>;
 };
 
 export type ChartProps = {
@@ -25,7 +25,7 @@ export type ProjectItemProps = {
 
 export type UserItemProps = {
   user: User;
-  func: Function;
+  onExecute: OnExecute;
 };
 
 export type InfoCardProps = {
@@ -33,7 +33,7 @@ export type InfoCardProps = {
   values?: ListItemProps[];
   projects?: Project[];
   users?: User[];
-  func: Function;
+  onExecute: OnExecute;
 };
 
 export type LinearTaskProps = {
@@ -52,4 +52,39 @@ type TagType = "type" | "state" | "proirity";
 export type TagProps = {
   value: string;
   type: TagType;
+};
+
+/**
+ * Accion que ejecuta un modal cuando termina su trabajo, normalmente
+ * para recargar los datos que affecto.
+ */
+export type OnExecute = () => Promise<void> | void;
+
+/**
+ * Accion que cambia el estado de una tarea y actualiza los datos locales
+ * sin volver a consultar la api.
+ */
+export type OnChangeStatus = (id: number, status: TaskStatus) => void;
+
+export type ModalProps = {
+  onClose: Function;
+  onExecute: OnExecute;
+};
+
+export type UserModalProps = {
+  user?: User;
+  onClose: Function;
+  onExecute: OnExecute;
+};
+
+export type EditTaskModalProps = {
+  task: Task;
+  onClose: Function;
+  onExecute: OnExecute;
+};
+
+export type EditProjectModalProps = {
+  project: Project;
+  onClose: Function;
+  onExecute: OnExecute;
 };

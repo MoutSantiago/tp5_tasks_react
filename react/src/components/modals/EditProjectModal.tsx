@@ -1,0 +1,92 @@
+import { type JSX, type SubmitEvent } from "react";
+import { toast } from "sonner";
+import type { EditProjectModalProps } from "../../types/props";
+import type { EditProjectDto } from "../../types/data";
+import { editProject } from "../../api/project";
+
+/**
+ * Componente modal con el formulario para editar un proyecto
+ *
+ * @prop {Function} onClose Funcion para cerrar el modal
+ * @prop {Function} onExecute Funcion a ejecutar luego de editar el proyecto
+ */
+export default function EditProjectModal({
+  project,
+  onClose,
+  onExecute,
+}: EditProjectModalProps): JSX.Element {
+  /**
+   * Recopila los datos del formulario.
+   *
+   * @param event - Evento de submit del formulario.
+   */
+  const handleSubmit = async (
+    event: SubmitEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
+
+    const form: FormData = new FormData(event.currentTarget);
+
+    const changes: EditProjectDto = {
+      name: String(form.get("name") ?? undefined),
+      description: String(form.get("description") ?? undefined),
+    };
+
+    await editProject(project.id, changes);
+    toast.info("Proyecto Modificado");
+    await onExecute();
+    onClose();
+  };
+
+  return (
+    <div className="modal__background" onClick={() => onClose()}>
+      <form
+        className="modal card surface radius-lg shadow-card"
+        onClick={(event) => event.stopPropagation()}
+        onSubmit={handleSubmit}
+      >
+        <header className="card__header">
+          <h2 className="card__title">Editar proyecto</h2>
+        </header>
+
+        <div className="card__body">
+          <div className="field">
+            <label className="field__label" htmlFor="project-name">
+              Nombre
+            </label>
+            <input
+              className="field__input"
+              id="project-name"
+              name="name"
+              type="text"
+              placeholder="Nombre del proyecto"
+              defaultValue={project.name}
+            />
+          </div>
+
+          <div className="field">
+            <label className="field__label" htmlFor="project-description">
+              Descripción
+            </label>
+            <textarea
+              className="field__input"
+              id="project-description"
+              name="description"
+              placeholder="Descripción del proyecto"
+              defaultValue={project.description}
+            />
+          </div>
+        </div>
+
+        <footer className="form__actions">
+          <button className="button" type="button" onClick={() => onClose()}>
+            Cancelar
+          </button>
+          <button className="button button--primary" type="submit">
+            Modificar proyecto
+          </button>
+        </footer>
+      </form>
+    </div>
+  );
+}

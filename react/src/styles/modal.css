@@ -1,0 +1,17 @@
+.modal {
+  width: min(500px, 100%);
+  max-height: 100%;
+}
+
+.modal__background {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #00000030;
+  z-index: 100;
+}

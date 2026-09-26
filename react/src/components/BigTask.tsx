@@ -1,35 +1,74 @@
 import Tag from "./Tag";
 import { selectSprint, selectTask } from "../types/selection";
 import type { JSX } from "react";
-import type { Task } from "../types/data";
+import type { Task, TaskStatus } from "../types/data";
+import type { OnChangeStatus, OnExecute } from "../types/props";
+import { useModal } from "./modals/ModalProvider";
+
+const STATUSES: TaskStatus[] = [
+  "backlog",
+  "to_do",
+  "in_progress",
+  "review",
+  "done",
+];
 
 /**
  * Vista detallada de una tarea, con sus etiquetas, responsables,
  * dependencias y fechas.
  *
  * @param task - Tarea a mostrar.
- * @param func - Acción para editar la tarea.
+ * @param onExecute - Acción a ejecutar cuando se edita la tarea.
+ * @param onChangeStatus - Acción a ejecutar cuando se cambia el estado.
  */
 export default function BigTask({
   task,
-  func,
+  onExecute,
+  onChangeStatus,
 }: {
   task: Task;
-  func: Function;
+  onExecute: OnExecute;
+  onChangeStatus: OnChangeStatus;
 }): JSX.Element {
+  const { openModal } = useModal();
+
+  /**
+   * Pide el cambio de estado y avisa al padre para que actualice la tarea.
+   *
+   * @param event - Evento de cambio del select de estado.
+   */
+  const handleStatusChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ): void => {
+    onChangeStatus(task.id, event.target.value as TaskStatus);
+  };
+
   return (
     <>
       <header className="card__header row-between">
         <span className="task__id">#{task.id}</span>
         <span className="task__summary grow text-md">{task.summary}</span>
         <Tag value={task.activity} type="type" />
-        <Tag value={task.status} type="state" />
+        <select
+          className="tag tag-state tag-select"
+          aria-label="Estado de la tarea"
+          value={task.status}
+          onChange={handleStatusChange}
+        >
+          {STATUSES.map(
+            (status: TaskStatus): JSX.Element => (
+              <option key={status} value={status}>
+                {status.replaceAll("_", " ")}
+              </option>
+            ),
+          )}
+        </select>
         <Tag value={task.priority} type="proirity" />
         <button
           className="icon-button icon-button--accent"
           type="button"
           aria-label={`Editar ${task.summary.toLowerCase()}`}
-          onClick={() => func()}
+          onClick={() => openModal("editTask", { task, onExecute })}
         >
           <span aria-hidden="true">+</span>
         </button>
@@ -58,6 +97,7 @@ export default function BigTask({
         <div className="task__dependencies scroll-y">
           {task.dependencies.map((dependencie) => (
             <p
+              key={dependencie.id}
               className="card__subtitle text-sm text-muted"
               onClick={() => selectTask(dependencie.id)}
             >

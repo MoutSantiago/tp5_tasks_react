@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
-import { api } from "./api/axios";
 import Chart from "./components/Chart";
 import InfoCard from "./components/InfoCard";
 import Statistic from "./components/Statistic";
 import TaskList from "./components/TaskList";
 import BigTask from "./components/BigTask";
 import ProjectInfo from "./components/ProjectInfo";
+import { changeTaskState, loadTasks } from "./api/task";
+import { loadProjects } from "./api/project";
+import { loadUsers } from "./api/user";
+
 import { bindSelection, type Selection } from "./types/selection";
+import type { Project, Sprint, Task, TaskStatus, User } from "./types/data";
 
-import type { Project, Sprint, Task, User } from "./types/data";
-
+/**
+ * Función que dado un array de tareas calcula la cantidad de tareas que fueron
+ * cerradas en cada una de las ultimas semanas.
+ *
+ * @param {Task[]} tasks Array de tareas
+ * @returns {number[]} Array con la cantidad de tareas cerradas en las ultimas semanas
+ */
 function getClosedTasksByWeek(tasks: Task[]): number[] {
   const now = new Date();
 
@@ -46,13 +55,19 @@ function getClosedTasksByWeek(tasks: Task[]): number[] {
     result.pop();
   }
 
-  return result;
+  return result.reverse();
 }
 
+/**
+ * Dado un array de numeros, retorna un array con los valores escalados
+ * Primero busca el valor mayor, el cual se toma como 100, luego a cada valor
+ * se le aplica una regla de 3 simple en base al mayor
+ *
+ * @param {number[]} numbers Array de numeros
+ * @returns {number[]} Array de porcentajes
+ */
 function transformIntoPercentage(numbers: number[]): number[] {
   const max: number = Math.max(...numbers);
-
-  // Ejecutamos una regla de 3 simple por cada valor del array, siendo max == 100
   return numbers.map((num: number): number => (num * 100) / max);
 }
 
@@ -71,40 +86,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const loadTasks = async () => {
-      const response = await api.get("/task");
-      setTasks(
-        response.data.map((task: Task) => ({
-          ...task,
-          created_at: new Date(task.created_at),
-          closed_at: task.closed_at ? new Date(task.closed_at) : null,
-        })),
-      );
-    };
-
-    const loadProjects = async () => {
-      const response = await api.get("/project");
-      setProjects(
-        response.data.map((project: Project) => ({
-          ...project,
-          created_at: new Date(project.created_at),
-          sprints: project.sprints.map((sprint: Sprint) => ({
-            ...sprint,
-            start_date: new Date(sprint.start_date),
-            end_date: sprint.end_date ? new Date(sprint.end_date) : undefined,
-          })),
-        })),
-      );
-    };
-
-    const loadUsers = async () => {
-      const response = await api.get("/user");
-      setUsers(response.data);
-    };
-
-    loadTasks();
-    loadProjects();
-    loadUsers();
+    (async () => {
+      setTasks(await loadTasks());
+      setProjects(await loadProjects());
+      setUsers(await loadUsers());
+    })();
   }, []);
 
   const taskDone: number = tasks.filter(
@@ -130,6 +116,46 @@ function App() {
             ),
           )
         : undefined;
+
+  const reloadTasks = async (): Promise<void> => {
+    setTasks(await loadTasks());
+  };
+
+  const reloadProjects = async (): Promise<void> => {
+    setProjects(await loadProjects());
+  };
+
+  const reloadUsers = async (): Promise<void> => {
+    setUsers(await loadUsers());
+  };
+
+  const changeStatus = (id: number, status: TaskStatus): void => {
+    const previous: Task | undefined = tasks.find((task) => task.id === id);
+
+    if (!previous || previous.status === status) return;
+
+    (async (): Promise<void> => {
+      try {
+        await changeTaskState(id, status);
+        setTasks((current) =>
+          current.map(
+            (task: Task): Task =>
+              task.id === id
+                ? {
+                    ...task,
+                    status,
+                    closed_at: status === "done" ? new Date() : undefined,
+                  }
+                : task,
+          ),
+        );
+      } catch {
+        setTasks((current) =>
+          current.map((task: Task): Task => (task.id === id ? previous : task)),
+        );
+      }
+    })();
+  };
 
   const tasksClosedForWeek = getClosedTasksByWeek(tasks);
   const chart = (
@@ -158,12 +184,13 @@ function App() {
             {selectedTask ? (
               <BigTask
                 task={selectedTask}
-                func={() => toast.info("Editar tarea")}
+                onExecute={reloadTasks}
+                onChangeStatus={changeStatus}
               />
             ) : selectedProject ? (
               <ProjectInfo
                 project={selectedProject}
-                func={() => toast.info("Editar proyecto")}
+                onExecute={() => reloadProjects()}
               />
             ) : (
               chart
@@ -172,38 +199,24 @@ function App() {
           <InfoCard
             title="Proyectos"
             projects={projects}
-            func={() => {
-              toast.info("Añadir proyecto");
-            }}
+            onExecute={reloadProjects}
           />
-          <InfoCard
-            title="Usuarios"
-            users={users}
-            func={() => {
-              toast.info("Añadir usuario");
-            }}
-          />
+          <InfoCard title="Usuarios" users={users} onExecute={reloadUsers} />
 
           <Statistic
             title="Tareas completadas"
             value={taskDone}
-            change={`${taskDonePercentage}%`}
+            change={`${Number.isInteger(taskDonePercentage) ? taskDonePercentage : taskDonePercentage.toFixed(2)}%`}
             increasing={taskDone >= taskPending}
           />
           <Statistic
             title="Tareas pendientes"
             value={taskPending}
-            change={`${taskPendingPercentage}%`}
+            change={`${Number.isInteger(taskPendingPercentage) ? taskPendingPercentage : taskPendingPercentage.toFixed(2)}%`}
             increasing={taskDone < taskPending}
           />
         </section>
-        <TaskList
-          title="Tareas"
-          tasks={tasks}
-          func={() => {
-            toast.info("Añadir tarea");
-          }}
-        />
+        <TaskList title="Tareas" tasks={tasks} onExecute={reloadTasks} />
       </main>
     </>
   );

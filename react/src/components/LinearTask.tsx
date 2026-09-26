@@ -19,7 +19,7 @@ export default function LinearTask({ task }: LinearTaskProps): JSX.Element {
       <span className="task__id">#{task.id}</span>
       <span className="task__summary grow text-md">{task.summary}</span>
       <Tag value={task.activity} type="type" />
-      <Tag value={task.status} type="state" />
+      <Tag value={task.status.replaceAll("_", " ")} type="state" />
       <Tag value={task.priority} type="proirity" />
     </article>
   );

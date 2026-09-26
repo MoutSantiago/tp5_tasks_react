@@ -6,12 +6,31 @@ export type Activity =
   | "documentation";
 export type TaskStatus =
   | "backlog"
-  | "to do"
-  | "in progress"
+  | "to_do"
+  | "in_progress"
   | "review"
   | "done";
 export type Priority = "must" | "should" | "could" | "wont";
 export type SprintStatus = "planned" | "active" | "completed" | "cancelled";
+
+export type AddTaskDto = {
+  summary: string;
+  description: string;
+  activity: Activity;
+  priority: Priority;
+  sprint_id: number;
+  reporter_id: number;
+  assignee_id?: number;
+};
+
+export type EditTaskDto = {
+  summary?: string;
+  description?: string;
+  activity?: Activity;
+  status?: TaskStatus;
+  priority?: Priority;
+  assignee_id?: number | null;
+};
 
 export type Task = {
   id: number;
@@ -44,12 +63,26 @@ export type Sprint = {
   project_id: number;
 };
 
+export type AddProjectDto = {
+  name: string;
+  description?: string;
+};
+
+export type EditProjectDto = {
+  name?: string;
+  description?: string;
+};
+
 export type Project = {
   id: number;
   name: string;
   description: string;
   created_at: Date;
   sprints: Sprint[];
+};
+
+export type UserDto = {
+  name: string;
 };
 
 export type User = {

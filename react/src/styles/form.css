@@ -1,0 +1,58 @@
+/* ------------------------------------------------------------------ */
+/* Formulario                                                          */
+/* ------------------------------------------------------------------ */
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.field__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.field__input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.field__input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.field__input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+textarea.field__input {
+  min-height: 5.5rem;
+  resize: vertical;
+}
+
+select.field__input {
+  cursor: pointer;
+}
