@@ -1,5 +1,11 @@
 import { api } from "./axios";
-import type { AddTaskDto, EditTaskDto, Task, TaskStatus } from "../types/data";
+import type {
+  AddTaskDto,
+  EditTaskDto,
+  Task,
+  TaskDependencie,
+  TaskStatus,
+} from "../types/data";
 
 /**
  * Obtiene todas las tareas con sus dependencias desde la api y
@@ -51,4 +57,26 @@ export async function changeTaskState(
 ): Promise<TaskStatus> {
   await api.put(`/task/state/${id}`, { status: state });
   return state;
+}
+
+/**
+ * Crea una relación de dependencia entre dos tareas
+ *
+ * @param {TaskDependencie} dependencie Datso de la dependencia
+ */
+export async function attachDependencie(
+  dependencie: TaskDependencie,
+): Promise<void> {
+  await api.post("/task/attach", dependencie);
+}
+
+/**
+ * Elimina una realción de dependencia entre dos tareas
+ *
+ * @param {TaskDependencie} dependencie Dependenncia que se va a eliminar
+ */
+export async function detachDependencie(
+  dependencie: TaskDependencie,
+): Promise<void> {
+  await api.delete("/task/detach", { data: dependencie });
 }

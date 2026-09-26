@@ -1,4 +1,4 @@
-import type { Project, Task, TaskStatus, User } from "./data";
+import type { Project, Sprint, Task, TaskStatus, User } from "./data";
 
 export type TaskListProps = {
   title: string;
@@ -67,6 +67,19 @@ export type OnExecute = () => Promise<void> | void;
 export type OnChangeStatus = (id: number, status: TaskStatus) => void;
 
 export type ModalProps = {
+  onClose: Function;
+  onExecute: OnExecute;
+};
+
+export type AttachModalProps = {
+  id: number;
+  onClose: Function;
+  onExecute: OnExecute;
+};
+
+export type SprintModalProps = {
+  project_id?: number;
+  sprint?: Sprint;
   onClose: Function;
   onExecute: OnExecute;
 };

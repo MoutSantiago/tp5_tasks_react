@@ -32,6 +32,11 @@ export type EditTaskDto = {
   assignee_id?: number | null;
 };
 
+export type TaskDependencie = {
+  dependent_task: number;
+  independent_task: number;
+};
+
 export type Task = {
   id: number;
   summary: string;
@@ -52,6 +57,16 @@ export type Task = {
     summary: string;
     closed: boolean;
   }[];
+};
+
+export type AddSprintDto = {
+  name: string;
+  project_id: number;
+};
+
+export type EditSprintDto = {
+  name: string;
+  id: number;
 };
 
 export type Sprint = {

@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import type { Task, TaskStatus } from "../types/data";
 import type { OnChangeStatus, OnExecute } from "../types/props";
 import { useModal } from "./modals/ModalProvider";
+import { detachDependencie } from "../api/task";
 
 const STATUSES: TaskStatus[] = [
   "backlog",
@@ -94,15 +95,39 @@ export default function BigTask({
           </div>
         </div>
         <p className="task__user--name text-xs font-semibold">Prerequisitos:</p>
+        <button
+          className="icon-button icon-button--accent"
+          type="button"
+          aria-label={`Editar ${task.summary.toLowerCase()}`}
+          onClick={() =>
+            openModal("attachDependencie", { id: task.id, onExecute })
+          }
+        >
+          <span aria-hidden="true">+</span>
+        </button>
         <div className="task__dependencies scroll-y">
           {task.dependencies.map((dependencie) => (
-            <p
-              key={dependencie.id}
-              className="card__subtitle text-sm text-muted"
+            <article
+              className="sprint surface surface--raised radius-md"
               onClick={() => selectTask(dependencie.id)}
             >
-              {dependencie.summary}
-            </p>
+              <span className="sprint__id">#{dependencie.id}</span>
+              <span className="text-md">{dependencie.summary}</span>
+              <button
+                className="icon-button icon-button--accent"
+                type="button"
+                aria-label={`Eliminar depencendia`}
+                onClick={async () => {
+                  await detachDependencie({
+                    dependent_task: task.id,
+                    independent_task: dependencie.id,
+                  });
+                  onExecute();
+                }}
+              >
+                <span aria-hidden="true">+</span>
+              </button>
+            </article>
           ))}
         </div>
       </div>

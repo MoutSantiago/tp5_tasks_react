@@ -21,7 +21,7 @@ export class ProjectService {
     return await this.prisma.project.findMany({
       orderBy: { id: 'asc' },
       include: {
-        sprints: {},
+        sprints: { orderBy: { id: 'asc' } },
       },
     });
   }

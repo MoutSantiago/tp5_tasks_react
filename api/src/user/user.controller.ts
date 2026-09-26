@@ -57,15 +57,4 @@ export class UserController {
   ): Promise<app_user> {
     return await this.userService.modifyName(id, userDto.name);
   }
-
-  /**
-   * Elimina un usuario
-   *
-   * @param id Id del usuario
-   */
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async removeUser(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.userService.removeUser(id);
-  }
 }

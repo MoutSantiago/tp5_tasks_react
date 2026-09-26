@@ -4,6 +4,7 @@ import { useModal } from "./modals/ModalProvider";
 import type { JSX } from "react";
 import type { Project, Sprint } from "../types/data";
 import type { OnExecute } from "../types/props";
+import { avanceSprint, cancelSprint } from "../api/sprint";
 
 /**
  * Vista detallada de un proyecto, con su descripción y botón para editarlo.
@@ -23,7 +24,6 @@ export default function ProjectInfo({
   return (
     <>
       <header className="card__header row-between">
-        <span className="task__id">#{project.id}</span>
         <span className="task__summary grow text-md">{project.name}</span>
         <button
           className="icon-button icon-button--accent"
@@ -39,6 +39,17 @@ export default function ProjectInfo({
           {project.description}
         </p>
         <div className="card__body">
+          <h3 className="task__id">Sprints</h3>
+          <button
+            className="icon-button icon-button--accent"
+            type="button"
+            aria-label={`Añadir sprint`}
+            onClick={() =>
+              openModal("createSprint", { project_id: project.id, onExecute })
+            }
+          >
+            <span aria-hidden="true">+</span>
+          </button>
           {project.sprints.map((sprint: Sprint) => (
             <article className="sprint surface surface--raised radius-md">
               <span className="sprint__id">#{sprint.id}</span>
@@ -51,6 +62,41 @@ export default function ProjectInfo({
                 }
               `}</span>
               <Tag value={sprint.status} type="state" />
+              <button
+                className="icon-button icon-button--accent"
+                type="button"
+                aria-label={`Avanzar sprint`}
+                onClick={async () => {
+                  await avanceSprint(sprint.id);
+                  onExecute();
+                }}
+              >
+                <span aria-hidden="true">{">"}</span>
+              </button>
+              <button
+                className="icon-button icon-button--accent"
+                type="button"
+                aria-label={`Cancelar sprint`}
+                onClick={async () => {
+                  await cancelSprint(sprint.id);
+                  onExecute();
+                }}
+              >
+                <span aria-hidden="true">x</span>
+              </button>
+              <button
+                className="icon-button icon-button--accent"
+                type="button"
+                aria-label={`Añadir sprint`}
+                onClick={() =>
+                  openModal("editSprint", {
+                    sprint: sprint,
+                    onExecute,
+                  })
+                }
+              >
+                <span aria-hidden="true">+</span>
+              </button>
             </article>
           ))}
         </div>
