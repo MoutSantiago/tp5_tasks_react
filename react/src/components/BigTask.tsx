@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import type { Task, TaskStatus } from "../types/data";
 import type { OnChangeStatus, OnExecute } from "../types/props";
 import { useModal } from "./modals/ModalProvider";
-import { detachDependencie } from "../api/task";
+import { deleteTask, detachDependencie } from "../api/task";
 import { toast } from "sonner";
 
 const STATUSES: TaskStatus[] = [
@@ -76,6 +76,23 @@ export default function BigTask({
         >
           <span aria-hidden="true">✎</span>
         </button>
+        <button
+          className="icon-button icon-button--danger"
+          type="button"
+          aria-label={`Eliminar ${task.summary.toLowerCase()}`}
+          onClick={() =>
+            openModal("confirmModal", {
+              text: `Estas segurode eliminar la tarea ${task.summary}?`,
+              onExecute: async () => {
+                await deleteTask(task.id);
+                toast.success("Tarea eliminada");
+                onExecute();
+              },
+            })
+          }
+        >
+          <span aria-hidden="true">✕</span>
+        </button>
       </header>
       <div className="task__body task__body--detail">
         <p className="card__subtitle text-sm text-muted">{task.description}</p>
@@ -126,12 +143,17 @@ export default function BigTask({
                 type="button"
                 aria-label={`Eliminar dependencia`}
                 onClick={async () => {
-                  await detachDependencie({
-                    dependent_task: task.id,
-                    independent_task: dependencie.id,
+                  openModal("confirmModal", {
+                    text: "Estas seguro de querer eliminar esta dependencia?",
+                    onExecute: async () => {
+                      await detachDependencie({
+                        dependent_task: task.id,
+                        independent_task: dependencie.id,
+                      });
+                      toast.success("Dependencia eliminada");
+                      onExecute();
+                    },
                   });
-                  toast.success("Dependencia eliminada");
-                  onExecute();
                 }}
               >
                 <span aria-hidden="true">✕</span>

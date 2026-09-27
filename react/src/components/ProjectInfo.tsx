@@ -4,8 +4,9 @@ import { useModal } from "./modals/ModalProvider";
 import type { JSX } from "react";
 import type { Project, Sprint } from "../types/data";
 import type { OnExecute } from "../types/props";
-import { avanceSprint, cancelSprint } from "../api/sprint";
+import { avanceSprint, cancelSprint, deleteSprint } from "../api/sprint";
 import { toast } from "sonner";
+import { deleteProject } from "../api/project";
 
 /**
  * Vista detallada de un proyecto, con su descripción y botón para editarlo.
@@ -16,9 +17,11 @@ import { toast } from "sonner";
 export default function ProjectInfo({
   project,
   onExecute,
+  reloadAll,
 }: {
   project: Project;
   onExecute: OnExecute;
+  reloadAll: Function;
 }): JSX.Element {
   const { openModal } = useModal();
 
@@ -35,6 +38,23 @@ export default function ProjectInfo({
           onClick={() => openModal("editProject", { project, onExecute })}
         >
           <span aria-hidden="true">✎</span>
+        </button>
+        <button
+          className="icon-button icon-button--danger"
+          type="button"
+          aria-label={`Eliminar ${project.name.toLowerCase()}`}
+          onClick={() =>
+            openModal("confirmModal", {
+              text: `Estas segurode eliminar el proyecto ${project.name}? Esto elimiara todos los sprints y tareas relacionadas`,
+              onExecute: async () => {
+                await deleteProject(project.id);
+                toast.success("Proyecto eliminado");
+                reloadAll();
+              },
+            })
+          }
+        >
+          <span aria-hidden="true">✕</span>
         </button>
       </header>
       <div className="task__body task__body--detail">
@@ -81,6 +101,19 @@ export default function ProjectInfo({
                 <span aria-hidden="true">{">"}</span>
               </button>
               <button
+                className="icon-button icon-button--accent icon-button--sm"
+                type="button"
+                aria-label={`Editar sprint`}
+                onClick={() =>
+                  openModal("editSprint", {
+                    sprint: sprint,
+                    onExecute,
+                  })
+                }
+              >
+                <span aria-hidden="true">✎</span>
+              </button>
+              <button
                 className="icon-button icon-button--warning icon-button--sm"
                 type="button"
                 aria-label={`Cancelar sprint`}
@@ -93,17 +126,21 @@ export default function ProjectInfo({
                 <span aria-hidden="true">✕</span>
               </button>
               <button
-                className="icon-button icon-button--accent icon-button--sm"
+                className="icon-button icon-button--danger icon-button--sm"
                 type="button"
-                aria-label={`Editar sprint`}
+                aria-label={`Eliminar sprint`}
                 onClick={() =>
-                  openModal("editSprint", {
-                    sprint: sprint,
-                    onExecute,
+                  openModal("confirmModal", {
+                    text: `Seguro que quieres eliminar ${sprint.name}? esto eliminara todas las tareas relacionadas con el mismo`,
+                    onExecute: async () => {
+                      await deleteSprint(sprint.id);
+                      toast.success("Sprint eliminado");
+                      reloadAll();
+                    },
                   })
                 }
               >
-                <span aria-hidden="true">✎</span>
+                <span aria-hidden="true">✕</span>
               </button>
             </article>
           ))}

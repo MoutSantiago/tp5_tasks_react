@@ -13,6 +13,7 @@ import EditProjectModal from "./EditProjectModal";
 import UserModal from "./UserModal";
 import SprintModal from "./SprintModal";
 import AttachDependencieModal from "./AttachDependencieModal";
+import ConfirmModal from "./ConfirmModal";
 
 const modals = {
   createTask: CreateTaskModal,
@@ -24,6 +25,7 @@ const modals = {
   createSprint: SprintModal,
   editSprint: SprintModal,
   attachDependencie: AttachDependencieModal,
+  confirmModal: ConfirmModal,
 };
 
 type ModalType = keyof typeof modals;
@@ -94,6 +96,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
       case "attachDependencie":
         return <AttachDependencieModal {...modal.props} onClose={closeModal} />;
+
+      case "confirmModal":
+        return <ConfirmModal {...modal.props} onClose={closeModal} />;
     }
   };
 

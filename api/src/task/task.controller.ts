@@ -82,17 +82,6 @@ export class TaskController {
   }
 
   /**
-   * Elimina una tarea de la base de datos
-   *
-   * @param id Id de la tarea a eliminar
-   */
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.taskService.deleteTask(id);
-  }
-
-  /**
    * Relaciona dos tareas mediante una dependencia
    *
    * @param {AttachTaskDto} attachTaskDto Ids de las tareas dependiente e independiente
@@ -112,5 +101,16 @@ export class TaskController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async detachTasks(@Body() detachTaskDto: AttachTaskDto): Promise<void> {
     await this.taskService.detachTask(detachTaskDto);
+  }
+
+  /**
+   * Elimina una tarea de la base de datos
+   *
+   * @param id Id de la tarea a eliminar
+   */
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.taskService.deleteTask(id);
   }
 }

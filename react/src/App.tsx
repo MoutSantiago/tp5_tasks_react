@@ -147,6 +147,11 @@ function App() {
     setUsers(await loadUsers());
   };
 
+  const reloadAll = async (): Promise<void> => {
+    setTasks(await loadTasks());
+    setProjects(await loadProjects());
+  };
+
   const changeStatus = (id: number, status: TaskStatus): void => {
     const previous: Task | undefined = tasks.find((task) => task.id === id);
 
@@ -212,6 +217,7 @@ function App() {
               <ProjectInfo
                 project={selectedProject}
                 onExecute={() => reloadProjects()}
+                reloadAll={reloadAll}
               />
             ) : (
               chart

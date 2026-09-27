@@ -46,3 +46,12 @@ export async function editProject(
 ): Promise<void> {
   await api.put(`/project/${id}`, changes);
 }
+
+/**
+ * Elimina un proyecto y todos los sprints y tareas relacionadas cone este
+ *
+ * @param {number} id Id del proyecto
+ */
+export async function deleteProject(id: number): Promise<void> {
+  await api.delete(`/project/${id}`);
+}

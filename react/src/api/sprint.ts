@@ -87,3 +87,12 @@ export async function cancelSprint(id: number): Promise<Sprint> {
       : undefined,
   };
 }
+
+/**
+ * Elimina un sprint y todas las tareas que se relacionan con el
+ *
+ * @param {number} id Id del sprint a eliminar
+ */
+export async function deleteSprint(id: number): Promise<void> {
+  await api.delete(`sprint/${id}`);
+}

@@ -80,3 +80,12 @@ export async function detachDependencie(
 ): Promise<void> {
   await api.delete("/task/detach", { data: dependencie });
 }
+
+/**
+ * Elimina una tarea y todo lo que depende de ella
+ *
+ * @param {number} id Id de la tarea a eliminar
+ */
+export async function deleteTask(id: number): Promise<void> {
+  await api.delete(`/task/${id}`);
+}

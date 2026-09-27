@@ -101,3 +101,9 @@ export type EditProjectModalProps = {
   onClose: Function;
   onExecute: OnExecute;
 };
+
+export type ConfirmModalProps = {
+  text: string;
+  onClose: Function;
+  onExecute: OnExecute;
+};
