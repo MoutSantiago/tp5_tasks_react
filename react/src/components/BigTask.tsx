@@ -5,6 +5,7 @@ import type { Task, TaskStatus } from "../types/data";
 import type { OnChangeStatus, OnExecute } from "../types/props";
 import { useModal } from "./modals/ModalProvider";
 import { detachDependencie } from "../api/task";
+import { toast } from "sonner";
 
 const STATUSES: TaskStatus[] = [
   "backlog",
@@ -46,9 +47,11 @@ export default function BigTask({
 
   return (
     <>
-      <header className="card__header row-between">
-        <span className="task__id">#{task.id}</span>
-        <span className="task__summary grow text-md">{task.summary}</span>
+      <header className="card__header card__header--detail card__header--task">
+        <span className="task__id detail__id">#{task.id}</span>
+        <span className="task__summary detail__heading grow text-md">
+          {task.summary}
+        </span>
         <Tag value={task.activity} type="type" />
         <select
           className="tag tag-state tag-select"
@@ -71,10 +74,10 @@ export default function BigTask({
           aria-label={`Editar ${task.summary.toLowerCase()}`}
           onClick={() => openModal("editTask", { task, onExecute })}
         >
-          <span aria-hidden="true">+</span>
+          <span aria-hidden="true">✎</span>
         </button>
       </header>
-      <div className="task__body">
+      <div className="task__body task__body--detail">
         <p className="card__subtitle text-sm text-muted">{task.description}</p>
         <div className="task__users-container flex gap-4">
           <div className="task__user grow">
@@ -94,11 +97,11 @@ export default function BigTask({
             </span>
           </div>
         </div>
-        <p className="task__user--name text-xs font-semibold">Prerequisitos:</p>
+        <p className="detail__title text-xs font-semibold">Prerequisitos:</p>
         <button
           className="icon-button icon-button--accent"
           type="button"
-          aria-label={`Editar ${task.summary.toLowerCase()}`}
+          aria-label={`Añadir dependencia`}
           onClick={() =>
             openModal("attachDependencie", { id: task.id, onExecute })
           }
@@ -108,24 +111,30 @@ export default function BigTask({
         <div className="task__dependencies scroll-y">
           {task.dependencies.map((dependencie) => (
             <article
+              key={dependencie.id}
               className="sprint surface surface--raised radius-md"
-              onClick={() => selectTask(dependencie.id)}
             >
               <span className="sprint__id">#{dependencie.id}</span>
-              <span className="text-md">{dependencie.summary}</span>
+              <span
+                className="text-md sprint__name sprint__name--link"
+                onClick={() => selectTask(dependencie.id)}
+              >
+                {dependencie.summary}
+              </span>
               <button
-                className="icon-button icon-button--accent"
+                className="icon-button icon-button--danger icon-button--sm"
                 type="button"
-                aria-label={`Eliminar depencendia`}
+                aria-label={`Eliminar dependencia`}
                 onClick={async () => {
                   await detachDependencie({
                     dependent_task: task.id,
                     independent_task: dependencie.id,
                   });
+                  toast.success("Dependencia eliminada");
                   onExecute();
                 }}
               >
-                <span aria-hidden="true">+</span>
+                <span aria-hidden="true">✕</span>
               </button>
             </article>
           ))}
@@ -133,7 +142,7 @@ export default function BigTask({
       </div>
       <footer className="card__footer flex justify-between">
         <span
-          className="task__date text-xs font-medium"
+          className="task__date task__date--link text-xs font-medium"
           onClick={() => selectSprint(task.sprint.id)}
         >
           #{`${task.sprint.id} ${task.sprint.name}`}

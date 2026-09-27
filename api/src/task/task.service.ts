@@ -173,24 +173,6 @@ export class TaskService {
   }
 
   /**
-   * Busca una unica tarea en la db filtrada mediante un id
-   *
-   * @async
-   * @param {number} id El id de la tarea a buscar
-   * @returns {Promise<TaskResponseDto>} La tarea buscada si es que existe
-   */
-  async getTask(id: number): Promise<TaskResponseDto | void> {
-    const task = await this.prisma.task.findUnique({
-      where: { id },
-      include: this.prismaIncludeTask,
-    });
-
-    if (!task) return;
-
-    return this.taskFormater(task);
-  }
-
-  /**
    * Crea una nueva tarea con los datos dados, la añade a la base de datos y
    * la retorna si se creo correctamente
    *
@@ -310,49 +292,22 @@ export class TaskService {
   }
 
   /**
-   * Cierra una tarea que no halla sido cerrada anteriromente y la retorna
-   * en caso de que se cierre correctamente
+   * Mediante una transacción elimina una tarea y todas las dependencias
+   * en las que forma parte, revirtiendo los cambios en caso de algún fallo
    *
    * @async
-   * @param {number} id Id de la tarea que se quiere cerrar
-   * @throws {NotFoundException} Si la tarea no se encontro o ya esta cerrada
-   * @throws {ConflictException} Si la tarea tiene dependencias incompletas
-   * @returns {Promise<TaskResponseDto>}
+   * @param {number} id Id de la tarea a eliminar
    */
-  async closeTask(id: number): Promise<TaskResponseDto> {
-    const task: task | null = await this.prisma.task.findFirst({
-      where: {
-        id,
-        closed_at: null,
-      },
-    });
-
-    if (!task) {
-      throw new NotFoundException('Task not found or already closed');
-    }
-
-    const hasIncomplete =
-      (await this.prisma.precondition.findFirst({
+  async deleteTask(id: number): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.precondition.deleteMany({
         where: {
-          dependent_task_id: id,
-          independent_task: {
-            status: { not: 'done' },
-          },
+          OR: [{ independent_task_id: id }, { dependent_task_id: id }],
         },
-        select: { independent_task_id: true },
-      })) !== null;
+      });
 
-    if (hasIncomplete) {
-      throw new ConflictException('This task has incomplete dependencies');
-    }
-
-    const closedTask = await this.prisma.task.update({
-      where: { id: id },
-      data: { status: 'done', closed_at: new Date() },
-      include: this.prismaIncludeTask,
+      await tx.task.delete({ where: { id } });
     });
-
-    return this.taskFormater(closedTask);
   }
 
   /**

@@ -56,7 +56,7 @@ export default function CreateTaskModal({
     };
 
     await addTask(task);
-    toast.info("Tarea añadida");
+    toast.success("Tarea añadida");
     await onExecute();
     onClose();
   };

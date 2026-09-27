@@ -68,7 +68,7 @@ export default function EditTaskModal({
 
     try {
       await editTask(task.id, data);
-      toast.info("Tarea modificada");
+      toast.success("Tarea modificada");
       await onExecute();
       onClose();
     } catch {

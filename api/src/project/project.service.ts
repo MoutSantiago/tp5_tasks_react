@@ -66,12 +66,47 @@ export class ProjectService {
   }
 
   /**
-   * Elimina los datos de un proyecto de la base de datos
+   * Elimina los datos de un proyecto de la base de datos usando
+   * una transacción, que se asegura que todo se elimine correctamente
+   * en el siguiente orden:
+   * - Dependencias de tareas
+   * - Tareas
+   * - Sprints
+   * - Proyecto
    *
    * @async
    * @param {number} id Id del proyecto a eliminar
    */
   async deleteProject(id: number): Promise<void> {
-    await this.prisma.project.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      const sprintsId = (
+        await tx.sprint.findMany({
+          where: { project_id: id },
+          select: { id: true },
+        })
+      ).map((sprint) => sprint.id);
+
+      const tasksId = (
+        await tx.task.findMany({
+          where: { sprint_id: { in: sprintsId } },
+          select: { id: true },
+        })
+      ).map((task) => task.id);
+
+      await tx.precondition.deleteMany({
+        where: {
+          OR: [
+            { independent_task_id: { in: tasksId } },
+            { dependent_task_id: { in: tasksId } },
+          ],
+        },
+      });
+
+      await tx.task.deleteMany({ where: { id: { in: tasksId } } });
+
+      await tx.sprint.deleteMany({ where: { id: { in: sprintsId } } });
+
+      await tx.project.delete({ where: { id } });
+    });
   }
 }

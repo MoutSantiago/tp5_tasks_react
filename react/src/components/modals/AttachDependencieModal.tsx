@@ -40,7 +40,7 @@ export default function AttachDependencieModal({
     const independent_task = Number(form.get("independent"));
 
     await attachDependencie({ dependent_task: id, independent_task });
-    toast.info("Dependencia creada");
+    toast.success("Dependencia creada");
     onExecute();
     onClose();
   };

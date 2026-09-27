@@ -133,4 +133,43 @@ export class SprintService {
       data: { status: 'cancelled', end_date: new Date() },
     });
   }
+
+  /**
+   * Elimina un sprint con una transacción que se asegura de:
+   * - Eliminar el sprint
+   * - Eliminar las tareas dentro de ese sprint
+   * - Eliminar las dependencias de esas tareas
+   * La transacción se asegura de que si hay un fallo de por medio
+   * se restablece todo a su estado original
+   *
+   * @async
+   * @param {number} id Id del sprint
+   */
+  async deleteSprint(id: number): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const taskIds = (
+        await this.prisma.task.findMany({
+          where: {
+            sprint_id: id,
+          },
+          select: {
+            id: true,
+          },
+        })
+      ).map((task) => task.id);
+
+      await tx.precondition.deleteMany({
+        where: {
+          OR: [
+            { dependent_task_id: { in: taskIds } },
+            { independent_task_id: { in: taskIds } },
+          ],
+        },
+      });
+
+      await tx.task.deleteMany({ where: { id: { in: taskIds } } });
+
+      await tx.sprint.delete({ where: { id } });
+    });
+  }
 }

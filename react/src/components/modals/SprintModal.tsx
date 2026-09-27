@@ -32,14 +32,14 @@ export default function SprintModal({
         name: String(form.get("name")),
         project_id: project_id,
       });
-      toast.info("Sprint creado");
+      toast.success("Sprint creado");
     }
 
     if (sprint) {
       await editSprint(sprint.id, {
         name: String(form.get("name")),
       });
-      toast.info("Sprint modificado");
+      toast.success("Sprint modificado");
     }
 
     await onExecute();

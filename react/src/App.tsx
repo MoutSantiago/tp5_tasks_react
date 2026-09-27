@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { Toaster, type ToastClassnames } from "sonner";
 import Chart from "./components/Chart";
 import InfoCard from "./components/InfoCard";
 import Statistic from "./components/Statistic";
@@ -12,6 +12,24 @@ import { loadUsers } from "./api/user";
 
 import { bindSelection, type Selection } from "./types/selection";
 import type { Project, Sprint, Task, TaskStatus, User } from "./types/data";
+
+/** Clases que el Toaster aplica a cada parte del aviso, definidas en
+    styles/toast.css */
+const toastClassNames: ToastClassnames = {
+  toast: "toast",
+  content: "toast__content",
+  title: "toast__title",
+  description: "toast__description",
+  icon: "toast__icon",
+  closeButton: "toast__close",
+  actionButton: "toast__action",
+  cancelButton: "toast__cancel",
+  default: "toast--default",
+  info: "toast--info",
+  success: "toast--success",
+  warning: "toast--warning",
+  error: "toast--error",
+};
 
 /**
  * Función que dado un array de tareas calcula la cantidad de tareas que fueron
@@ -169,7 +187,10 @@ function App() {
 
   return (
     <>
-      <Toaster />
+      <Toaster
+        position="top-right"
+        toastOptions={{ unstyled: true, classNames: toastClassNames }}
+      />
       <div className="ambient" aria-hidden="true">
         <div className="ambient__orb ambient__orb--one" />
         <div className="ambient__orb ambient__orb--two" />

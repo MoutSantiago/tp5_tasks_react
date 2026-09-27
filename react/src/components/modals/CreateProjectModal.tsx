@@ -32,7 +32,7 @@ export default function CreateProjectModal({
     };
 
     await addProject(project);
-    toast.info("Proyecto creado");
+    toast.success("Proyecto creado");
     await onExecute();
     onClose();
   };

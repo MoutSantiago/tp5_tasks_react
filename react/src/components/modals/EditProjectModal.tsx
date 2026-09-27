@@ -33,7 +33,7 @@ export default function EditProjectModal({
     };
 
     await editProject(project.id, changes);
-    toast.info("Proyecto Modificado");
+    toast.success("Proyecto Modificado");
     await onExecute();
     onClose();
   };

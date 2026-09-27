@@ -33,10 +33,10 @@ export default function UserModal({
 
     if (!user) {
       await addUser(userData);
-      toast.info("Usuario creado");
+      toast.success("Usuario creado");
     } else {
       await editUser(user.id, userData);
-      toast.info("Usuario modificado");
+      toast.success("Usuario modificado");
     }
 
     await onExecute();

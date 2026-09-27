@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Delete,
   Post,
   Put,
   Param,
@@ -77,5 +78,16 @@ export class SprintController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async cancelSprint(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.sprintService.cancelSprint(id);
+  }
+
+  /**
+   * Elimina un sprint de la base de datos
+   *
+   * @param id Id del sprint
+   */
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSprint(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.sprintService.deleteSprint(id);
   }
 }

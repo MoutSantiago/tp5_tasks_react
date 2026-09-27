@@ -38,23 +38,6 @@ export class TaskController {
   }
 
   /**
-   * Obtiene una tarea mediante su id
-   *
-   * @param {number} id Id de la tarea buscada
-   * @returns {Promise<TaskResponseDto>} La tarea buscada
-   */
-  @Get(':id')
-  async getTask(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<TaskResponseDto> {
-    const task: TaskResponseDto | void = await this.taskService.getTask(id);
-
-    if (!task) throw new NotFoundException(`Task with id ${id} not found`);
-
-    return task;
-  }
-
-  /**
    * Crea una tarea nueva
    *
    * @param {CreateTaskDto} createTaskDto Datos para crear una tarea
@@ -99,16 +82,14 @@ export class TaskController {
   }
 
   /**
-   * Cierra una tarea
+   * Elimina una tarea de la base de datos
    *
-   * @param id Id de la tarea a cerrar
-   * @return {Promise<TaskResponseDto>} Tarea madificada
+   * @param id Id de la tarea a eliminar
    */
-  @Put('close/:id')
-  async closeTask(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<TaskResponseDto> {
-    return await this.taskService.closeTask(id);
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.taskService.deleteTask(id);
   }
 
   /**

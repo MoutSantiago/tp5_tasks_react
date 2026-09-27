@@ -12,6 +12,7 @@
 	--color-bg: linear-gradient(#150621, #050222);
 	--color-surface: rgba(16, 21, 36, 0.42);
 	--color-surface-raised: rgba(255, 255, 255, 0.05);
+	--color-surface-floating: rgba(13, 17, 34, 0.88);
 	--color-border: rgba(148, 163, 184, 0.14);
 
 	--glass-blur: 18px;
@@ -25,11 +26,20 @@
 	--color-accent: #7c6cf6;
 	--color-accent-soft: rgba(124, 108, 246, 0.14);
 	--gradient-accent: linear-gradient(135deg, #7c6cf6 0%, #4f9cf7 100%);
+	--gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+	--gradient-danger: linear-gradient(135deg, #fb7185 0%, #ef4444 100%);
 
 	--color-success: #34d399;
 	--color-success-soft: rgba(52, 211, 153, 0.12);
 	--color-danger: #f87171;
 	--color-danger-soft: rgba(248, 113, 113, 0.12);
+	--color-warning: #fbbf24;
+	--color-warning-soft: rgba(251, 191, 36, 0.14);
+	--color-info: #7dd3fc;
+	--color-info-soft: rgba(125, 211, 252, 0.14);
+
+	--color-accent-light: #c4bcff;
+	--color-select-bg: #131b2e;
 
 	--radius-sm: 8px;
 	--radius-md: 14px;
@@ -38,6 +48,14 @@
 
 	--shadow-card: 0 10px 30px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
 	--shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.4);
+	--shadow-accent: 0 6px 16px rgba(124, 108, 246, 0.35);
+	--shadow-warning: 0 6px 16px rgba(251, 191, 36, 0.28);
+	--shadow-danger: 0 6px 16px rgba(248, 113, 113, 0.28);
+
+	--ring-accent: 0 0 0 3px rgba(124, 108, 246, 0.28);
+
+	--color-scrollbar: rgba(148, 163, 184, 0.26);
+	--color-scrollbar-hover: rgba(148, 163, 184, 0.45);
 
 	--transition-fast: 150ms ease;
 	--transition-base: 250ms ease;
@@ -51,6 +69,26 @@
 *::before,
 *::after {
 	box-sizing: border-box;
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+::-webkit-scrollbar {
+	width: 0.5rem;
+	height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-scrollbar);
+	border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-scrollbar-hover);
 }
 
 html {
@@ -66,6 +104,8 @@ body {
 	color: var(--color-text);
 	background-color: var(--color-bg);
 	overflow: hidden;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -78,6 +118,8 @@ p {
 
 button {
 	font: inherit;
+	color: inherit;
+	-webkit-tap-highlight-color: transparent;
 }
 
 ::selection {

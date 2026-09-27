@@ -12,6 +12,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+  padding-top: 0.25rem;
 }
 
 .field {
@@ -36,23 +37,42 @@
   font: inherit;
   transition:
     border-color var(--transition-fast),
-    background-color var(--transition-fast);
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .field__input::placeholder {
   color: var(--color-text-faint);
 }
 
+.field__input:hover {
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
 .field__input:focus {
   border-color: var(--color-accent);
+  box-shadow: var(--ring-accent);
   outline: none;
 }
 
 textarea.field__input {
   min-height: 5.5rem;
   resize: vertical;
+  line-height: 1.55;
 }
 
 select.field__input {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2rem;
   cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8 9.5 4.5' fill='none' stroke='%2394a3b8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6875rem center;
+  background-size: 0.75rem;
+}
+
+select.field__input option {
+  background-color: var(--color-select-bg);
+  color: var(--color-text);
 }
