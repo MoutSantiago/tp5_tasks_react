@@ -45,7 +45,7 @@ export default function ProjectInfo({
           aria-label={`Eliminar ${project.name.toLowerCase()}`}
           onClick={() =>
             openModal("confirmModal", {
-              text: `Estas segurode eliminar el proyecto ${project.name}? Esto elimiara todos los sprints y tareas relacionadas`,
+              text: `Estas seguro de eliminar el proyecto ${project.name}? Esto elimiara todos los sprints y tareas relacionadas`,
               onExecute: async () => {
                 await deleteProject(project.id);
                 toast.success("Proyecto eliminado");

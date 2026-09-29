@@ -19,3 +19,17 @@ services:
     restart: unless-stopped
     networks:
       - task_net
+  
+  task_react:
+    build:
+      context: ./react
+      target: production
+    container_name: task_react
+    ports:
+      - "${REACT_PORT}:80"
+    restart: unless-stopped
+    depends_on:
+      task_api:
+        condition: service_started
+    networks:
+      - task_net

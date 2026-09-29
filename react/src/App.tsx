@@ -73,7 +73,7 @@ function getClosedTasksByWeek(tasks: Task[]): number[] {
     result.pop();
   }
 
-  return result.reverse();
+  return result;
 }
 
 /**

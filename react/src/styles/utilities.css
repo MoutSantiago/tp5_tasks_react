@@ -126,6 +126,11 @@
   font-weight: 800;
 }
 
+.text-wrap {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
 /* --- Píldora / badge -------------------------------------------------- */
 
 .pill {

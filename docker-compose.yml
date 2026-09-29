@@ -1,6 +1,5 @@
 include:
-  - path: docker-compose.api.${BUILD_TARGET:-development}.yml
-  - path: docker-compose.react.${BUILD_TARGET:-development}.yml
+  - path: docker-compose.${BUILD_TARGET:-development}.yml
 
 services:
   task_db:

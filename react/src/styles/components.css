@@ -68,7 +68,9 @@
   opacity: 0.55;
 }
 
-.task--done .task__summary {
+.task--done .task__summary,
+.task--done .sprint__name,
+.task--done .sprint__name:hover {
   text-decoration: line-through;
 }
 
@@ -302,9 +304,7 @@
   background-position:
     right 0.5rem center,
     0 0;
-  background-size:
-    0.6875rem,
-    auto;
+  background-size: 0.6875rem, auto;
   transition:
     filter var(--transition-fast),
     box-shadow var(--transition-fast);

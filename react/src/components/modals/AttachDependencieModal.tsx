@@ -69,7 +69,7 @@ export default function AttachDependencieModal({
               {tasks.map(
                 (task: Task): JSX.Element => (
                   <option key={task.id} value={task.id}>
-                    {task.summary}
+                    {`#${task.id} ${task.summary}`}
                   </option>
                 ),
               )}

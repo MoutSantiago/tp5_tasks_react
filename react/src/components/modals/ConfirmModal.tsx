@@ -18,7 +18,7 @@ export default function ConfirmModal({
     <div className="modal__background" onClick={() => onClose()}>
       <div className="modal card surface radius-lg shadow-card">
         <header className="card__header">
-          <h2 className="card__title">{text}</h2>
+          <h2 className="card__title text-wrap">{text}</h2>
         </header>
 
         <footer className="form__actions">

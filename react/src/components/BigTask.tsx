@@ -68,31 +68,33 @@ export default function BigTask({
           )}
         </select>
         <Tag value={task.priority} type="proirity" />
-        <button
-          className="icon-button icon-button--accent"
-          type="button"
-          aria-label={`Editar ${task.summary.toLowerCase()}`}
-          onClick={() => openModal("editTask", { task, onExecute })}
-        >
-          <span aria-hidden="true">✎</span>
-        </button>
-        <button
-          className="icon-button icon-button--danger"
-          type="button"
-          aria-label={`Eliminar ${task.summary.toLowerCase()}`}
-          onClick={() =>
-            openModal("confirmModal", {
-              text: `Estas segurode eliminar la tarea ${task.summary}?`,
-              onExecute: async () => {
-                await deleteTask(task.id);
-                toast.success("Tarea eliminada");
-                onExecute();
-              },
-            })
-          }
-        >
-          <span aria-hidden="true">✕</span>
-        </button>
+        <div className="button__container">
+          <button
+            className="icon-button icon-button--accent"
+            type="button"
+            aria-label={`Editar ${task.summary.toLowerCase()}`}
+            onClick={() => openModal("editTask", { task, onExecute })}
+          >
+            <span aria-hidden="true">✎</span>
+          </button>
+          <button
+            className="icon-button icon-button--danger"
+            type="button"
+            aria-label={`Eliminar ${task.summary.toLowerCase()}`}
+            onClick={() =>
+              openModal("confirmModal", {
+                text: `Estas segurode eliminar la tarea ${task.summary}?`,
+                onExecute: async () => {
+                  await deleteTask(task.id);
+                  toast.success("Tarea eliminada");
+                  onExecute();
+                },
+              })
+            }
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
       </header>
       <div className="task__body task__body--detail">
         <p className="card__subtitle text-sm text-muted">{task.description}</p>
@@ -125,11 +127,11 @@ export default function BigTask({
         >
           <span aria-hidden="true">+</span>
         </button>
-        <div className="task__dependencies scroll-y">
+        <div className="task__dependencies">
           {task.dependencies.map((dependencie) => (
             <article
               key={dependencie.id}
-              className="sprint surface surface--raised radius-md"
+              className={`sprint surface surface--raised radius-md ${dependencie.closed ? "task--done" : ""}`}
             >
               <span className="sprint__id">#{dependencie.id}</span>
               <span

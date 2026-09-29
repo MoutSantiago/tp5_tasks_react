@@ -11,6 +11,11 @@
 .modal .card__title {
   font-size: 1.125rem;
   letter-spacing: -0.01em;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
 }
 
 .modal__background {

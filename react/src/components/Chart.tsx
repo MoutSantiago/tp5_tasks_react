@@ -14,6 +14,13 @@ export default function Chart({
   values,
   bars,
 }: ChartProps): JSX.Element {
+  const labels = bars.map(
+    (_, index: number) =>
+      bars.length - 1 - index === 0
+        ? "Semana actual"
+        : `Semana ${bars.length - 1 - index}`,
+  );
+
   return (
     <>
       <header className="card__header row-between">
@@ -25,17 +32,26 @@ export default function Chart({
       <div
         className="chart"
         role="img"
-        aria-label={`Gráfico de barras de ${title.toLowerCase()}: ${bars.join(", ")}`}
+        aria-label={`Gráfico de barras de ${title.toLowerCase()}, de la semana más reciente a la más antigua: ${[...values].reverse().join(", ")}`}
       >
-        {bars.map((value: number, index: number) => (
+        {[...bars].reverse().map((value: number, index: number) => (
           <div
             key={index}
             aria-hidden="true"
             className="chart__bar"
             style={{ height: `${value}%` }}
           >
-            <span className="bar__value text-lg">{values[index]}</span>
+            <span className="bar__value text-lg">
+              {values[bars.length - 1 - index]}
+            </span>
           </div>
+        ))}
+      </div>
+      <div className="chart__labels" aria-hidden="true">
+        {labels.map((label: string, index: number) => (
+          <span key={index} className="chart__label">
+            {label}
+          </span>
         ))}
       </div>
     </>

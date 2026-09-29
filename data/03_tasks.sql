@@ -1,15 +1,4 @@
--- ============================================
--- TASKS
--- ============================================
-
--- Se insertan tareas de otros 02_seed.sql, referenciando a los sprints,
--- proyectos y usuarios ya cargados para que queden correctamente
--- vinculadas con FK.
-
--- ============================================
--- Tareas - Sprint 1 · Sistema de Gestión (completed)
--- ============================================
-
+-- Tareas
 INSERT INTO task (
     summary,
     description,
@@ -24,20 +13,20 @@ INSERT INTO task (
 )
 SELECT
     'Relevamiento de requisitos',
-    'Relevar los requisitos funcionales del sistema junto a los stakeholders.',
+    'Entrevistas con los responsables de cada área para relevar los flujos de trabajo, las reglas del negocio y los reportes que necesita el equipo. Queda todo volcado en un documento de requisitos que se revisa y aprueba antes de empezar a desarrollar.',
     'task',
     'done',
     'must',
-    '2026-09-01',
-    '2026-09-06',
+    CURRENT_DATE - 42,
+    CURRENT_DATE - 21,
     s.id,
     u1.id,
     u2.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u1 ON u1.name = 'Santiago'
-JOIN app_user u2 ON u2.name = 'Martín'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 1';
+JOIN app_user u1 ON u1.name = 'Santiago Mout'
+JOIN app_user u2 ON u2.name = 'Martín Gómez'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'Fundamentos';
 
 INSERT INTO task (
     summary,
@@ -53,19 +42,19 @@ INSERT INTO task (
 )
 SELECT
     'Modelo de datos',
-    'Diseñar el modelo de datos de proyectos, sprints y tareas.',
+    'Diseño del modelo de datos de la aplicación (proyectos, sprints, tareas, usuarios y dependencias) con las relaciones, las restricciones y los tipos de cada columna, más el script de creación de las tablas y las consultas base que usa la API.',
     'documentation',
     'done',
     'must',
-    '2026-09-02',
-    '2026-09-08',
+    CURRENT_DATE - 40,
+    CURRENT_DATE - 21,
     s.id,
     u1.id,
     u1.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u1 ON u1.name = 'Santiago'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 1';
+JOIN app_user u1 ON u1.name = 'Santiago Mout'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'Fundamentos';
 
 INSERT INTO task (
     summary,
@@ -80,80 +69,21 @@ INSERT INTO task (
     assignee_id
 )
 SELECT
-    'Mockups de interfaz',
-    'Crear los mockups de las pantallas principales del sistema.',
+    'CRUD de proyectos',
+    'Alta, listado, edición y baja de proyectos con su nombre, su descripción y los sprints asociados. Incluye las validaciones del formulario, el mensaje de error cuando el nombre ya existe y la actualización automática del tablero al terminar cada operación.',
     'feature',
     'done',
-    'should',
-    '2026-09-05',
-    '2026-09-12',
-    s.id,
-    u2.id,
-    u3.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u2 ON u2.name = 'Martín'
-JOIN app_user u3 ON u3.name = 'Lucía'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 1';
-
-
--- ============================================
--- Tareas - Sprint 2 · Sistema de Gestión (active)
--- ============================================
-
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'API de autenticación',
-    'Implementar el login y el manejo de sesiones en el backend.',
-    'feature',
-    'in progress',
     'must',
-    '2026-09-15',
-    s.id,
-    u1.id,
-    u4.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u1 ON u1.name = 'Santiago'
-JOIN app_user u4 ON u4.name = 'Joaquín'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2';
-
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'CRUD de proyectos',
-    'Desarrollar el alta, baja y modificación de proyectos.',
-    'feature',
-    'in progress',
-    'must',
-    '2026-09-15',
+    CURRENT_DATE - 14,
+    CURRENT_DATE - 7,
     s.id,
     u3.id,
     u2.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u3 ON u3.name = 'Lucía'
-JOIN app_user u2 ON u2.name = 'Martín'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2';
+JOIN app_user u3 ON u3.name = 'Lucía Fernández'
+JOIN app_user u2 ON u2.name = 'Martín Gómez'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo';
 
 INSERT INTO task (
     summary,
@@ -162,25 +92,27 @@ INSERT INTO task (
     status,
     priority,
     created_at,
+    closed_at,
     sprint_id,
     reporter_id,
     assignee_id
 )
 SELECT
-    'CRUD de tareas',
-    'Desarrollar el alta, baja y modificación de tareas con sus estados.',
+    'Tablero de tareas',
+    'Tablero Kanban con una columna por estado de tarea y arrastrar y soltar para mover una tarjeta entre columnas. Suma los filtros por sprint, responsable, prioridad y tipo de actividad, y el contador de tareas que hay en cada columna del sprint activo.',
     'feature',
-    'to do',
+    'done',
     'must',
-    '2026-09-18',
+    CURRENT_DATE - 13,
+    CURRENT_DATE,
     s.id,
-    u4.id,
-    u5.id
+    u1.id,
+    u4.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u4 ON u4.name = 'Joaquín'
-JOIN app_user u5 ON u5.name = 'Valentina'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2';
+JOIN app_user u1 ON u1.name = 'Santiago Mout'
+JOIN app_user u4 ON u4.name = 'Joaquín Álvarez'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo';
 
 INSERT INTO task (
     summary,
@@ -194,52 +126,47 @@ INSERT INTO task (
     assignee_id
 )
 SELECT
-    'Listado de tareas por sprint',
-    'Mostrar el tablero de tareas agrupado por sprint.',
-    'improvement',
-    'to do',
-    'should',
-    '2026-09-18',
-    s.id,
-    u2.id,
-    u5.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u2 ON u2.name = 'Martín'
-JOIN app_user u5 ON u5.name = 'Valentina'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2';
-
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'Corregir validación de fechas',
-    'No permitir sprints con fecha de fin anterior a la de inicio.',
+    'Validación de fechas',
+    'Corregir el error que dejaba guardar un sprint con fecha de fin anterior a la de inicio. El mensaje de error tiene que aparecer en el formulario, marcar el campo inválido y el caso queda cubierto con pruebas para no volver a romperlo.',
     'bug',
     'review',
     'must',
-    '2026-09-17',
+    CURRENT_DATE - 10,
     s.id,
     u5.id,
     u4.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u5 ON u5.name = 'Valentina'
-JOIN app_user u4 ON u4.name = 'Joaquín'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2';
+JOIN app_user u5 ON u5.name = 'Valentina Sosa'
+JOIN app_user u4 ON u4.name = 'Joaquín Álvarez'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo';
 
-
--- ============================================
--- Tareas - Sprint 3 · Sistema de Gestión (planned)
--- ============================================
+INSERT INTO task (
+    summary,
+    description,
+    activity,
+    status,
+    priority,
+    created_at,
+    sprint_id,
+    reporter_id,
+    assignee_id
+)
+SELECT
+    'Dependencias entre tareas',
+    'Permitir marcar una tarea como prerrequisito de otra, bloquear el cierre de la dependiente mientras la independiente siga abierta y mostrar el grafo de dependencias en el detalle de la tarea, avisando cuando una tarea no se puede cerrar.',
+    'feature',
+    'to do',
+    'should',
+    CURRENT_DATE - 9,
+    s.id,
+    u2.id,
+    u5.id
+FROM sprint s
+JOIN project p ON p.id = s.project_id
+JOIN app_user u2 ON u2.name = 'Martín Gómez'
+JOIN app_user u5 ON u5.name = 'Valentina Sosa'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo';
 
 INSERT INTO task (
     summary,
@@ -254,24 +181,19 @@ INSERT INTO task (
 )
 SELECT
     'Panel de métricas',
-    'Construir los gráficos de avance por sprint y por usuario.',
-    'feature',
+    'Gráficos de avance por sprint y por responsable, con el porcentaje de tareas cerradas, la cantidad de tareas por estado y el tiempo promedio entre la creación y el cierre. Se calculan a partir de las tareas ya finalizadas del sistema.',
+    'improvement',
     'backlog',
     'could',
-    '2026-09-29',
+    CURRENT_DATE - 3,
     s.id,
     u3.id,
     u2.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u3 ON u3.name = 'Lucía'
-JOIN app_user u2 ON u2.name = 'Martín'
-WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 3';
-
-
--- ============================================
--- Tareas - Android · Aplicación Móvil (active)
--- ============================================
+JOIN app_user u3 ON u3.name = 'Lucía Fernández'
+JOIN app_user u2 ON u2.name = 'Martín Gómez'
+WHERE p.name = 'Sistema de Gestión' AND s.name = 'Métricas';
 
 INSERT INTO task (
     summary,
@@ -280,25 +202,56 @@ INSERT INTO task (
     status,
     priority,
     created_at,
+    closed_at,
+    sprint_id,
+    reporter_id,
+    assignee_id
+)
+SELECT
+    'Diseño de pantallas',
+    'Wireframes de las pantallas de la aplicación móvil (hoy, agenda y detalle de actividad) respetando la guía de estilos del proyecto. Se validan con los usuarios la navegación y la cantidad de información por pantalla antes de maquetar.',
+    'documentation',
+    'done',
+    'should',
+    CURRENT_DATE - 38,
+    CURRENT_DATE - 14,
+    s.id,
+    u3.id,
+    u5.id
+FROM sprint s
+JOIN project p ON p.id = s.project_id
+JOIN app_user u3 ON u3.name = 'Lucía Fernández'
+JOIN app_user u5 ON u5.name = 'Valentina Sosa'
+WHERE p.name = 'Aplicación Móvil' AND s.name = 'Prototipo';
+
+INSERT INTO task (
+    summary,
+    description,
+    activity,
+    status,
+    priority,
+    created_at,
+    closed_at,
     sprint_id,
     reporter_id,
     assignee_id
 )
 SELECT
     'Login de la app',
-    'Pantalla de inicio de sesión para usuarios de la app móvil.',
+    'Pantalla de inicio de sesión de la aplicación móvil contra la API de autenticación, con sesión persistente entre cierres de la app y mensajes de error amigables ante credenciales inválidas o sin conexión a la red.',
     'feature',
-    'in progress',
+    'done',
     'must',
-    '2026-09-15',
+    CURRENT_DATE - 14,
+    CURRENT_DATE - 7,
     s.id,
     u1.id,
     u3.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u1 ON u1.name = 'Santiago'
-JOIN app_user u3 ON u3.name = 'Lucía'
-WHERE p.name = 'Aplicación Móvil' AND s.name = 'Sprint 2';
+JOIN app_user u1 ON u1.name = 'Santiago Mout'
+JOIN app_user u3 ON u3.name = 'Lucía Fernández'
+WHERE p.name = 'Aplicación Móvil' AND s.name = 'Recordatorios';
 
 INSERT INTO task (
     summary,
@@ -307,84 +260,27 @@ INSERT INTO task (
     status,
     priority,
     created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'Recordatorios locales',
-    'Implementar notificaciones locales para recordar actividades.',
-    'feature',
-    'to do',
-    'should',
-    '2026-09-20',
-    s.id,
-    u3.id,
-    u5.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u3 ON u3.name = 'Lucía'
-JOIN app_user u5 ON u5.name = 'Valentina'
-WHERE p.name = 'Aplicación Móvil' AND s.name = 'Sprint 2';
-
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'Sincronización con planillas',
-    'Exportar las actividades a una hoja de cálculo.',
-    'improvement',
-    'backlog',
-    'could',
-    '2026-09-22',
-    s.id,
-    u5.id,
-    u3.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u5 ON u5.name = 'Valentina'
-JOIN app_user u3 ON u3.name = 'Lucía'
-WHERE p.name = 'Aplicación Móvil' AND s.name = 'Sprint 2';
-
-
--- ============================================
--- Tareas - API Backend (active)
--- ============================================
-
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
+    closed_at,
     sprint_id,
     reporter_id,
     assignee_id
 )
 SELECT
     'Endpoints de usuarios',
-    'Exponer los endpoints de usuarios para los distintos clientes.',
+    'Endpoints REST de alta, consulta, edición y baja de usuarios, con validación de los datos de entrada, códigos de estado HTTP correctos en cada caso y la documentación de cada ruta en el README del servicio para que la consuman la web y la aplicación móvil.',
     'feature',
-    'in progress',
+    'done',
     'must',
-    '2026-09-10',
+    CURRENT_DATE - 35,
+    CURRENT_DATE - 21,
     s.id,
     u1.id,
     u4.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u1 ON u1.name = 'Santiago'
-JOIN app_user u4 ON u4.name = 'Joaquín'
-WHERE p.name = 'API Backend' AND s.name = 'Sprint 1';
+JOIN app_user u1 ON u1.name = 'Santiago Mout'
+JOIN app_user u4 ON u4.name = 'Joaquín Álvarez'
+WHERE p.name = 'API Backend' AND s.name = 'Usuarios';
 
 INSERT INTO task (
     summary,
@@ -399,55 +295,21 @@ INSERT INTO task (
 )
 SELECT
     'Autenticación JWT',
-    'Proteger los endpoints con tokens JWT.',
+    'Emisión y validación de tokens JWT para proteger los endpoints privados, controlando la expiración de la sesión y con un guard que rechace las peticiones sin un token válido o con un token vencido.',
     'feature',
-    'review',
+    'in progress',
     'must',
-    '2026-09-12',
+    CURRENT_DATE - 12,
     s.id,
     u4.id,
     u2.id
 FROM sprint s
 JOIN project p ON p.id = s.project_id
-JOIN app_user u4 ON u4.name = 'Joaquín'
-JOIN app_user u2 ON u2.name = 'Martín'
-WHERE p.name = 'API Backend' AND s.name = 'Sprint 1';
+JOIN app_user u4 ON u4.name = 'Joaquín Álvarez'
+JOIN app_user u2 ON u2.name = 'Martín Gómez'
+WHERE p.name = 'API Backend' AND s.name = 'Autenticación';
 
-INSERT INTO task (
-    summary,
-    description,
-    activity,
-    status,
-    priority,
-    created_at,
-    sprint_id,
-    reporter_id,
-    assignee_id
-)
-SELECT
-    'Documentación Swagger',
-    'Publicar la documentación interactiva de la API.',
-    'documentation',
-    'to do',
-    'should',
-    '2026-09-14',
-    s.id,
-    u2.id,
-    u1.id
-FROM sprint s
-JOIN project p ON p.id = s.project_id
-JOIN app_user u2 ON u2.name = 'Martín'
-JOIN app_user u1 ON u1.name = 'Santiago'
-WHERE p.name = 'API Backend' AND s.name = 'Sprint 1';
-
-
--- ============================================
--- DEPENDENCIAS (precondition)
--- ============================================
-
--- La dependencia se resuelve por summary y por sprint/proyecto, de modo
--- que este script se pueda re-ejecutar sin depender de ids hardcodeados.
-
+-- Precondiciones
 INSERT INTO precondition (
     dependent_task_id,
     independent_task_id
@@ -462,43 +324,7 @@ WHERE d.summary = 'Modelo de datos'
 AND d.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 1'
-)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO precondition (
-    dependent_task_id,
-    independent_task_id
-)
-SELECT
-    d.id AS dependent_task_id,
-    i.id AS independent_task_id
-FROM task d
-JOIN task i ON i.summary = 'Modelo de datos'
-        AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'Mockups de interfaz'
-AND d.sprint_id = (
-    SELECT s.id FROM sprint s
-    JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 1'
-)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO precondition (
-    dependent_task_id,
-    independent_task_id
-)
-SELECT
-    d.id AS dependent_task_id,
-    i.id AS independent_task_id
-FROM task d
-JOIN task i ON i.summary = 'API de autenticación'
-        AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'CRUD de tareas'
-AND d.sprint_id = (
-    SELECT s.id FROM sprint s
-    JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2'
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Fundamentos'
 )
 ON CONFLICT DO NOTHING;
 
@@ -512,11 +338,11 @@ SELECT
 FROM task d
 JOIN task i ON i.summary = 'CRUD de proyectos'
         AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'CRUD de tareas'
+WHERE d.summary = 'Tablero de tareas'
 AND d.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2'
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo'
 )
 ON CONFLICT DO NOTHING;
 
@@ -528,13 +354,13 @@ SELECT
     d.id AS dependent_task_id,
     i.id AS independent_task_id
 FROM task d
-JOIN task i ON i.summary = 'CRUD de tareas'
+JOIN task i ON i.summary = 'Validación de fechas'
         AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'Listado de tareas por sprint'
+WHERE d.summary = 'Dependencias entre tareas'
 AND d.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 2'
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo'
 )
 ON CONFLICT DO NOTHING;
 
@@ -546,31 +372,41 @@ SELECT
     d.id AS dependent_task_id,
     i.id AS independent_task_id
 FROM task d
-JOIN task i ON i.summary = 'CRUD de tareas'
-        AND i.sprint_id = d.sprint_id
+CROSS JOIN task i
+WHERE d.summary = 'CRUD de proyectos'
+AND d.sprint_id = (
+    SELECT s.id FROM sprint s
+    JOIN project p ON p.id = s.project_id
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo'
+)
+AND i.summary = 'Modelo de datos'
+AND i.sprint_id = (
+    SELECT s.id FROM sprint s
+    JOIN project p ON p.id = s.project_id
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Fundamentos'
+)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO precondition (
+    dependent_task_id,
+    independent_task_id
+)
+SELECT
+    d.id AS dependent_task_id,
+    i.id AS independent_task_id
+FROM task d
+CROSS JOIN task i
 WHERE d.summary = 'Panel de métricas'
 AND d.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Sprint 3'
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'Métricas'
 )
-ON CONFLICT DO NOTHING;
-
-INSERT INTO precondition (
-    dependent_task_id,
-    independent_task_id
-)
-SELECT
-    d.id AS dependent_task_id,
-    i.id AS independent_task_id
-FROM task d
-JOIN task i ON i.summary = 'Login de la app'
-        AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'Recordatorios locales'
-AND d.sprint_id = (
+AND i.summary = 'CRUD de proyectos'
+AND i.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'Aplicación Móvil' AND s.name = 'Sprint 2'
+    WHERE p.name = 'Sistema de Gestión' AND s.name = 'CRUD Completo'
 )
 ON CONFLICT DO NOTHING;
 
@@ -582,30 +418,17 @@ SELECT
     d.id AS dependent_task_id,
     i.id AS independent_task_id
 FROM task d
-JOIN task i ON i.summary = 'Endpoints de usuarios'
-        AND i.sprint_id = d.sprint_id
+CROSS JOIN task i
 WHERE d.summary = 'Autenticación JWT'
 AND d.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'API Backend' AND s.name = 'Sprint 1'
+    WHERE p.name = 'API Backend' AND s.name = 'Autenticación'
 )
-ON CONFLICT DO NOTHING;
-
-INSERT INTO precondition (
-    dependent_task_id,
-    independent_task_id
-)
-SELECT
-    d.id AS dependent_task_id,
-    i.id AS independent_task_id
-FROM task d
-JOIN task i ON i.summary = 'Autenticación JWT'
-        AND i.sprint_id = d.sprint_id
-WHERE d.summary = 'Documentación Swagger'
-AND d.sprint_id = (
+AND i.summary = 'Endpoints de usuarios'
+AND i.sprint_id = (
     SELECT s.id FROM sprint s
     JOIN project p ON p.id = s.project_id
-    WHERE p.name = 'API Backend' AND s.name = 'Sprint 1'
+    WHERE p.name = 'API Backend' AND s.name = 'Usuarios'
 )
 ON CONFLICT DO NOTHING;
