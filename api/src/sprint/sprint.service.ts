@@ -86,7 +86,7 @@ export class SprintService {
       where: { id },
     });
 
-    if (!sprint) throw new NotFoundException(`Sprint with id ${id} not found`);
+    if (!sprint) throw new NotFoundException(`Sprint con id ${id} no encontrado`);
 
     const nextStatus: sprint_state | undefined = this.advanceStatus(
       sprint?.status,
@@ -94,7 +94,7 @@ export class SprintService {
 
     if (!nextStatus)
       throw new ConflictException(
-        'Cannot advance a completed or canceled sprint',
+        'No se puede avanzar un sprint completado o cancelado',
       );
 
     await this.prisma.sprint.update({
@@ -122,10 +122,10 @@ export class SprintService {
       where: { id },
     });
 
-    if (!sprint) throw new NotFoundException(`Sprint with id ${id} not found`);
+    if (!sprint) throw new NotFoundException(`Sprint con id ${id} no encontrado`);
     if (sprint.status === 'completed' || sprint.status === 'cancelled')
       throw new ConflictException(
-        `Cannot cancel a completed or canceled sprint`,
+        `No se puede cancelar un sprint completado o cancelado`,
       );
 
     await this.prisma.sprint.update({

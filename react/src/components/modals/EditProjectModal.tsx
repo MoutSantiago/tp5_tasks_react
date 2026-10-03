@@ -79,10 +79,19 @@ export default function EditProjectModal({
         </div>
 
         <footer className="form__actions">
-          <button className="button" type="button" onClick={() => onClose()}>
+          <button
+            className="button"
+            type="button"
+            title="Cancelar"
+            onClick={() => onClose()}
+          >
             Cancelar
           </button>
-          <button className="button button--primary" type="submit">
+          <button
+            className="button button--primary"
+            type="submit"
+            title="Modificar proyecto"
+          >
             Modificar proyecto
           </button>
         </footer>

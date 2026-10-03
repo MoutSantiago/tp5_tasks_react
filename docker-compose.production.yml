@@ -4,7 +4,6 @@ services:
       context: ./api
       target: production
     container_name: task_api
-    env_file: ".env"
     ports:
       - "${API_PORT}:3000"
     env_file:
@@ -19,14 +18,18 @@ services:
     restart: unless-stopped
     networks:
       - task_net
-  
+
   task_react:
     build:
       context: ./react
       target: production
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:3000}
     container_name: task_react
     ports:
       - "${REACT_PORT}:80"
+    env_file:
+      - .env
     restart: unless-stopped
     depends_on:
       task_api:

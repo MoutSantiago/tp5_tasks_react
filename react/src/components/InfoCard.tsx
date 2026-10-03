@@ -64,6 +64,7 @@ export default function InfoCard({
         <button
           className="icon-button icon-button--accent"
           type="button"
+          title={`Añadir ${title.toLowerCase()}`}
           aria-label={`Añadir ${title.toLowerCase()}`}
           onClick={handleAdd}
         >

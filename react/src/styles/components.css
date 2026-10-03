@@ -343,6 +343,59 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Campo de búsqueda                                                  */
+/* ------------------------------------------------------------------ */
+
+.search {
+  width: 100%;
+  max-width: 14rem;
+  height: 2.125rem;
+  padding: 0 0.875rem 0 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-raised);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8.5' cy='8.5' r='5'/%3E%3Cpath d='m12.5 12.5 4 4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 0.75rem center;
+  background-size: 0.9375rem;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.8125rem;
+  outline: none;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.search::placeholder {
+  color: var(--color-text-faint);
+}
+
+.search:hover {
+  border-color: rgba(148, 163, 184, 0.28);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.search:focus {
+  border-color: var(--color-accent);
+  background-color: rgba(255, 255, 255, 0.08);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%237c6cf6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8.5' cy='8.5' r='5'/%3E%3Cpath d='m12.5 12.5 4 4'/%3E%3C/svg%3E");
+  box-shadow: var(--ring-accent);
+}
+
+.search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.75rem;
+  width: 0.75rem;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 2l8 8M10 2l-8 8'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
 /* Botón de icono                                                      */
 /* ------------------------------------------------------------------ */
 

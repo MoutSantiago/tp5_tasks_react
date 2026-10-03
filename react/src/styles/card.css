@@ -35,6 +35,10 @@
   min-width: 0;
 }
 
+.card__header .search {
+  margin-left: auto;
+}
+
 .card__title {
   font-size: 1rem;
   font-weight: 600;
@@ -324,5 +328,9 @@
 
   .detail__heading {
     font-size: 1.0625rem;
+  }
+
+  .search {
+    max-width: 9.5rem;
   }
 }

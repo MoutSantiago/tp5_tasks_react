@@ -209,10 +209,10 @@ export class TaskService {
       },
     });
 
-    if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+    if (!task) throw new NotFoundException(`No se encontró la tarea con id ${id}`);
 
     if (task.closed_at != null)
-      throw new ConflictException('Task has been closed');
+      throw new ConflictException('La tarea ya fue cerrada');
 
     if (editTaskDto.status === 'done') {
       const hasIncomplete =
@@ -227,7 +227,7 @@ export class TaskService {
         })) !== null;
 
       if (hasIncomplete)
-        throw new ConflictException('This task has incomplete dependencies');
+        throw new ConflictException('Esta tarea tiene dependencias sin completar');
     }
 
     const updatedTask = await this.prisma.task.update({
@@ -262,7 +262,7 @@ export class TaskService {
     });
 
     if (task.closed_at != null)
-      throw new ConflictException('Task has been closed');
+      throw new ConflictException('La tarea ya fue cerrada');
 
     if (status === 'done') {
       const hasIncomplete =
@@ -277,7 +277,7 @@ export class TaskService {
         })) !== null;
 
       if (hasIncomplete)
-        throw new ConflictException('This task has incomplete dependencies');
+        throw new ConflictException('Esta tarea tiene dependencias sin completar');
     }
 
     await this.prisma.task.update({
@@ -325,7 +325,7 @@ export class TaskService {
     const { dependent_task, independent_task } = attachTaskDto;
 
     if (dependent_task === independent_task) {
-      throw new BadRequestException('A task cannot depend on itself');
+      throw new BadRequestException('Una tarea no puede depender de sí misma');
     }
 
     const [dependentTask, independentTask] = await Promise.all([
@@ -334,7 +334,7 @@ export class TaskService {
     ]);
 
     if (!dependentTask || !independentTask) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException('Tarea no encontrada');
     }
 
     const existingRelation: precondition | null =
@@ -348,11 +348,11 @@ export class TaskService {
       });
 
     if (existingRelation) {
-      throw new ConflictException('Tasks are already attached');
+      throw new ConflictException('Las tareas ya están vinculadas');
     }
 
     if (await this.wouldCreateCycle(dependent_task, independent_task)) {
-      throw new BadRequestException('This dependency would create a cycle');
+      throw new BadRequestException('Esta dependencia crearía un ciclo');
     }
 
     await this.prisma.precondition.create({
@@ -375,7 +375,7 @@ export class TaskService {
     const { dependent_task, independent_task } = detachTaskDto;
 
     if (dependent_task === independent_task) {
-      throw new BadRequestException('A task cannot depend on itself');
+      throw new BadRequestException('Una tarea no puede depender de sí misma');
     }
 
     const existingRelation: precondition | null =
@@ -389,7 +389,7 @@ export class TaskService {
       });
 
     if (!existingRelation) {
-      throw new ConflictException('Tasks are not attached');
+      throw new ConflictException('Las tareas no están vinculadas');
     }
 
     await this.prisma.precondition.delete({

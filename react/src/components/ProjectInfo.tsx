@@ -34,6 +34,7 @@ export default function ProjectInfo({
         <button
           className="icon-button icon-button--accent"
           type="button"
+          title="Editar proyecto"
           aria-label={`Editar ${project.name.toLowerCase()}`}
           onClick={() => openModal("editProject", { project, onExecute })}
         >
@@ -42,6 +43,7 @@ export default function ProjectInfo({
         <button
           className="icon-button icon-button--danger"
           type="button"
+          title="Eliminar proyecto"
           aria-label={`Eliminar ${project.name.toLowerCase()}`}
           onClick={() =>
             openModal("confirmModal", {
@@ -66,6 +68,7 @@ export default function ProjectInfo({
           <button
             className="icon-button icon-button--accent"
             type="button"
+            title="Añadir sprint"
             aria-label={`Añadir sprint`}
             onClick={() =>
               openModal("createSprint", { project_id: project.id, onExecute })
@@ -91,6 +94,7 @@ export default function ProjectInfo({
               <button
                 className="icon-button icon-button--ghost icon-button--sm"
                 type="button"
+                title="Avanzar sprint"
                 aria-label={`Avanzar sprint`}
                 onClick={async () => {
                   await avanceSprint(sprint.id);
@@ -103,6 +107,7 @@ export default function ProjectInfo({
               <button
                 className="icon-button icon-button--accent icon-button--sm"
                 type="button"
+                title="Editar sprint"
                 aria-label={`Editar sprint`}
                 onClick={() =>
                   openModal("editSprint", {
@@ -116,18 +121,25 @@ export default function ProjectInfo({
               <button
                 className="icon-button icon-button--warning icon-button--sm"
                 type="button"
+                title="Cancelar sprint"
                 aria-label={`Cancelar sprint`}
-                onClick={async () => {
-                  await cancelSprint(sprint.id);
-                  toast.success("Sprint cancelado");
-                  onExecute();
-                }}
+                onClick={async () =>
+                  openModal("confirmModal", {
+                    text: `Seguro que quieres cancelar ${sprint.name}? este cambio no se puede revertir`,
+                    onExecute: async () => {
+                      await cancelSprint(sprint.id);
+                      toast.success("Sprint cancelado");
+                      onExecute();
+                    },
+                  })
+                }
               >
                 <span aria-hidden="true">✕</span>
               </button>
               <button
                 className="icon-button icon-button--danger icon-button--sm"
                 type="button"
+                title="Eliminar sprint"
                 aria-label={`Eliminar sprint`}
                 onClick={() =>
                   openModal("confirmModal", {

@@ -9,7 +9,7 @@ import type { ProjectItemProps } from "../types/props";
  */
 export default function ProjectItem({ project }: ProjectItemProps): JSX.Element {
 	return (
-		<div className="list-item" onClick={() => selectProject(project.id)}>
+		<div className="list-item" title="Ver proyecto" onClick={() => selectProject(project.id)}>
 			<div className="list-item__top row-between">
 				<span className="list-item__title text-md font-medium">{project.name}</span>
 			</div>

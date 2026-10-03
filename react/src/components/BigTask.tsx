@@ -72,6 +72,7 @@ export default function BigTask({
           <button
             className="icon-button icon-button--accent"
             type="button"
+            title="Editar tarea"
             aria-label={`Editar ${task.summary.toLowerCase()}`}
             onClick={() => openModal("editTask", { task, onExecute })}
           >
@@ -80,6 +81,7 @@ export default function BigTask({
           <button
             className="icon-button icon-button--danger"
             type="button"
+            title="Eliminar tarea"
             aria-label={`Eliminar ${task.summary.toLowerCase()}`}
             onClick={() =>
               openModal("confirmModal", {
@@ -120,6 +122,7 @@ export default function BigTask({
         <button
           className="icon-button icon-button--accent"
           type="button"
+          title="Añadir dependencia"
           aria-label={`Añadir dependencia`}
           onClick={() =>
             openModal("attachDependencie", { id: task.id, onExecute })
@@ -136,6 +139,7 @@ export default function BigTask({
               <span className="sprint__id">#{dependencie.id}</span>
               <span
                 className="text-md sprint__name sprint__name--link"
+                title="Ver detalles de la tarea"
                 onClick={() => selectTask(dependencie.id)}
               >
                 {dependencie.summary}
@@ -143,6 +147,7 @@ export default function BigTask({
               <button
                 className="icon-button icon-button--danger icon-button--sm"
                 type="button"
+                title="Eliminar dependencia"
                 aria-label={`Eliminar dependencia`}
                 onClick={async () => {
                   openModal("confirmModal", {

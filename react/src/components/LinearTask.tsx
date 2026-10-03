@@ -14,6 +14,7 @@ export default function LinearTask({ task }: LinearTaskProps): JSX.Element {
       className={`task surface surface--raised radius-md ${
         task.closed_at ? "task--done" : ""
       }`}
+      title="Ver tarea"
       onClick={() => selectTask(task.id)}
     >
       <span className="task__id">#{task.id}</span>

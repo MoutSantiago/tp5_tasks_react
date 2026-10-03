@@ -1,6 +1,6 @@
 import LinearTask from "./LinearTask";
 
-import type { JSX } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 import type { TaskListProps } from "../types/props";
 import type { Task } from "../types/data";
 import { useModal } from "./modals/ModalProvider";
@@ -17,7 +17,12 @@ export default function TaskList({
   tasks,
   onExecute,
 }: TaskListProps): JSX.Element {
+  const [search, setSearch] = useState<string>("");
   const { openModal } = useModal();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearch(e.target.value);
+  };
 
   return (
     <section
@@ -31,21 +36,42 @@ export default function TaskList({
           </h2>
           <span className="card__count pill pill--accent">{tasks.length}</span>
         </div>
-        <button
-          className="icon-button icon-button--accent"
-          type="button"
-          aria-label={`Añadir ${title.toLowerCase()}`}
-          onClick={() => openModal("createTask", { onExecute })}
-        >
-          <span aria-hidden="true">+</span>
-        </button>
+        <div className="button__container">
+          <input
+            type="search"
+            className="search"
+            value={search}
+            onChange={handleChange}
+            placeholder="Buscar..."
+            aria-label="Buscar tareas"
+          />
+          <button
+            className="icon-button icon-button--accent"
+            type="button"
+            title={`Añadir ${title.toLowerCase()}`}
+            aria-label={`Añadir ${title.toLowerCase()}`}
+            onClick={() => openModal("createTask", { onExecute })}
+          >
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
       </header>
       <div className="card__body">
-        {tasks.map(
-          (task: Task): JSX.Element => (
-            <LinearTask key={task.id} task={task} />
-          ),
-        )}
+        {tasks
+          .filter(
+            (task: Task): boolean =>
+              task.summary
+                .toLocaleLowerCase()
+                .includes(search.toLocaleLowerCase()) ||
+              task.description
+                .toLocaleLowerCase()
+                .includes(search.toLocaleLowerCase()),
+          )
+          .map(
+            (task: Task): JSX.Element => (
+              <LinearTask key={task.id} task={task} />
+            ),
+          )}
       </div>
     </section>
   );

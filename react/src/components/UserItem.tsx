@@ -16,6 +16,7 @@ export default function UserItem({
   return (
     <div
       className="list-item"
+      title="Editar usuario"
       onClick={() => openModal("editUser", { user, onExecute })}
     >
       <div className="list-item__top row-between">

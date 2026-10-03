@@ -76,10 +76,19 @@ export default function SprintModal({
         </div>
 
         <footer className="form__actions">
-          <button className="button" type="button" onClick={() => onClose()}>
+          <button
+            className="button"
+            type="button"
+            title="Cancelar"
+            onClick={() => onClose()}
+          >
             Cancelar
           </button>
-          <button className="button button--primary" type="submit">
+          <button
+            className="button button--primary"
+            type="submit"
+            title={project_id ? "Crear sprint" : "Modificar sprint"}
+          >
             {project_id ? "Crear sprint" : "Modificar sprint"}
           </button>
         </footer>

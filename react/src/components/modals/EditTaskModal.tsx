@@ -199,6 +199,7 @@ export default function EditTaskModal({
           <button
             className="button"
             type="button"
+            title="Cancelar"
             disabled={sending}
             onClick={() => onClose()}
           >
@@ -207,6 +208,7 @@ export default function EditTaskModal({
           <button
             className="button button--primary"
             type="submit"
+            title={sending ? "Guardando..." : "Guardar cambios"}
             disabled={sending}
           >
             {sending ? "Guardando..." : "Guardar cambios"}

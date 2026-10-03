@@ -25,6 +25,7 @@ export default function ConfirmModal({
           <button
             className="button"
             type="button"
+            title="Cancelar"
             onClick={() => {
               onClose();
               toast.warning("Se canceló la acción");
@@ -35,6 +36,7 @@ export default function ConfirmModal({
           <button
             className="button button--primary"
             type="button"
+            title="Aceptar"
             onClick={() => onExecute()}
           >
             Aceptar
